@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -705,7 +706,7 @@ createKnob(G('g-vir'), 113,'MIC 2 X','gold');
 createKnob(G('g-vir'), 114,'MIC 2 Z','gold');
 
 // *** MODULATION — TYPE sends 0-4 raw index ***
-createSelect(G('g-mod-sel'),  33,'TYPE',['Chorus','Flanger','Phaser','Tremolo','Rotary'],'purple');
+createSelect(G('g-mod-sel'),  33,'TYPE',['Chorus','Tremolo','Phaser','Flanger','Rotary'],'purple');
 createPP(G('g-mod-sel'), 31,'POSITION','purple');
 createKnob(G('g-mod'), 35,'RATE','purple');
 createKnob(G('g-mod'), 36,'DEPTH','purple');
@@ -718,7 +719,7 @@ createKnob(G('g-delay'),  6,'FEEDBACK','green');
 createKnob(G('g-delay'),  8,'MIX','green');
 
 // *** REVERB TYPE sends 0-5 raw index ***
-createSelect(G('g-reverb-sel'), 85,'TYPE',['Room','Plate','Spring 1','Spring 2','Spring 3','Spring 4'],'purple');
+createSelect(G('g-reverb-sel'), 85,'TYPE',['Spring 4','Spring 3','Spring 2','Spring 1','Plate','Room'],'purple');
 createKnob(G('g-reverb'), 59,'TIME','purple');
 createKnob(G('g-reverb'), 62,'MIX','purple');
 
