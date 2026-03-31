@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ToneX Prestige</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0a;--panel:#141414;--panel2:#1c1c1c;
+  --border:#222;--border2:#2e2e2e;
+  --text:#e8e8e8;--sub:#555;
+  --gold:#d4af37;--goldbg:rgba(212,175,55,.1);--golddim:rgba(212,175,55,.18);
+  --green:#00d96a;--greenbg:rgba(0,217,106,.08);--greendim:rgba(0,217,106,.18);
+  --purple:#b060ff;--purplebg:rgba(176,96,255,.08);--purpledim:rgba(176,96,255,.18);
+  --blue:#00b4ff;--bluebg:rgba(0,180,255,.08);--bluedim:rgba(0,180,255,.18);
+  --red:#ff4040;--nav-h:58px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+::-webkit-scrollbar{width:0;height:0}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(10,10,10,.97);border-bottom:2px solid var(--gold);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hdr-l{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.hdr-status{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--sub)}
+.hdr-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;transition:all .3s}
+.hdr-dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.hdr-name{font-size:18px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+#midiSel{background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-size:11px;padding:6px 8px;border-radius:7px;outline:none;-webkit-appearance:none;max-width:130px}
+.icon-btn{width:34px;height:34px;border-radius:8px;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--sub);flex-shrink:0;font-size:17px}
+.icon-btn:active{background:#2a2a2a}
+
+/* BOTTOM NAV */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--panel);border-top:1px solid var(--border);display:flex;z-index:200}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--sub);font-size:10px;font-weight:700;letter-spacing:.06em;transition:color .2s}
+.nav-btn.active{color:var(--gold)}
+.nav-ico{font-size:18px;line-height:1}
+
+/* TABS */
+.tab{display:none;padding-bottom:calc(var(--nav-h) + 12px)}
+.tab.active{display:block}
+.editor-wrap{padding:12px 12px 0}
+
+/* HERO */
+.hero{background:var(--panel);border-radius:14px;border:1px solid var(--border);margin-bottom:14px;padding:16px;text-align:center}
+.hero h1{font-size:26px;font-weight:900;letter-spacing:.2em;color:var(--gold)}
+.hero p{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--sub);margin-top:4px}
+
+/* SECTION */
+.sec{background:var(--panel);border-radius:14px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden}
+.sec-hdr{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sec-hdr.gold{border-bottom:2px solid var(--gold)}
+.sec-hdr.green{border-bottom:2px solid var(--green)}
+.sec-hdr.purple{border-bottom:2px solid var(--purple)}
+.sec-hdr.blue{border-bottom:2px solid var(--blue)}
+.sec-title{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.sec-hdr.gold .sec-title{color:var(--gold)}
+.sec-hdr.green .sec-title{color:var(--green)}
+.sec-hdr.purple .sec-title{color:var(--purple)}
+.sec-hdr.blue .sec-title{color:var(--blue)}
+.sec-body{padding:14px}
+
+/* POWER BUTTON */
+.pwr{width:34px;height:34px;border-radius:8px;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.pwr svg{width:16px;height:16px;stroke:var(--sub);fill:none;stroke-width:2.2;stroke-linecap:round}
+.pwr.on.gold{background:var(--goldbg);border-color:var(--gold)}
+.pwr.on.gold svg{stroke:var(--gold)}
+.pwr.on.green{background:var(--greenbg);border-color:var(--green)}
+.pwr.on.green svg{stroke:var(--green)}
+.pwr.on.purple{background:var(--purplebg);border-color:var(--purple)}
+.pwr.on.purple svg{stroke:var(--purple)}
+.pwr.on.blue{background:var(--bluebg);border-color:var(--blue)}
+.pwr.on.blue svg{stroke:var(--blue)}
+.pwr:active{transform:scale(.92)}
+
+/* KNOB GRID */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:14px;justify-items:center}
+
+/* SELECT ROW */
+.sel-row{display:grid;gap:10px;margin-bottom:14px}
+.sel-row.cols2{grid-template-columns:1fr 1fr}
+.sel-row.cols1{grid-template-columns:1fr}
+.sel-wrap{display:flex;flex-direction:column;gap:5px}
+.sel-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.sel-box{background:#000;border-radius:9px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between;padding:9px 12px;position:relative;overflow:hidden}
+.sel-box.gold{border-color:var(--gold)}
+.sel-box.green{border-color:var(--green)}
+.sel-box.purple{border-color:var(--purple)}
+.sel-box.blue{border-color:var(--blue)}
+.sel-native{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer;font-size:16px}
+.sel-text{font-size:13px;font-weight:600;pointer-events:none}
+.sel-chev{font-size:12px;flex-shrink:0;pointer-events:none}
+.sel-chev.gold{color:var(--gold)}
+.sel-chev.green{color:var(--green)}
+.sel-chev.purple{color:var(--purple)}
+.sel-chev.blue{color:var(--blue)}
+
+/* PRE/POST TOGGLE */
+.pp-wrap{display:flex;flex-direction:column;gap:5px}
+.pp-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.pp-seg{display:flex;border-radius:9px;overflow:hidden;border:1.5px solid var(--border2)}
+.pp-seg.gold{border-color:var(--gold)}
+.pp-seg.green{border-color:var(--green)}
+.pp-seg.purple{border-color:var(--purple)}
+.pp-seg.blue{border-color:var(--blue)}
+.pp-btn{flex:1;padding:9px 6px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--sub);background:#000;border:none;font-family:inherit;cursor:pointer;transition:all .15s}
+.pp-btn+.pp-btn{border-left:1px solid var(--border2)}
+.pp-btn.active.gold{background:var(--golddim);color:var(--gold)}
+.pp-btn.active.green{background:var(--greendim);color:var(--green)}
+.pp-btn.active.purple{background:var(--purpledim);color:var(--purple)}
+.pp-btn.active.blue{background:var(--bluedim);color:var(--blue)}
+.pp-btn:active{opacity:.7}
+
+/* KNOB */
+.ctrl-unit{display:flex;flex-direction:column;align-items:center;gap:5px;touch-action:none;user-select:none;-webkit-user-select:none;width:82px;cursor:ns-resize}
+.knob-wrap{width:70px;height:70px;position:relative}
+.knob-body{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 37% 33%,#2c2c2c 0%,#111 50%,#040404 100%);box-shadow:0 4px 10px rgba(0,0,0,.8),inset 0 1px 2px rgba(255,255,255,.06)}
+.knob-canvas{position:absolute;top:-7px;left:-7px;touch-action:none;display:block}
+.ctrl-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);text-align:center}
+.ctrl-val{font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-align:center;min-width:30px}
+.ctrl-val.gold{color:var(--gold)}
+.ctrl-val.green{color:var(--green)}
+.ctrl-val.purple{color:var(--purple)}
+.ctrl-val.blue{color:var(--blue)}
+
+/* PRESETS TAB */
+.ptop{padding:12px 12px 0;display:flex;gap:8px;align-items:center}
+.psearch{flex:1;background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;color:var(--text);font-size:13px;outline:none}
+.psearch:focus{border-color:var(--gold)}
+.save-btn{background:var(--goldbg);border:1.5px solid var(--gold);color:var(--gold);border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.save-btn:active{background:var(--gold);color:#000}
+/* sync banner */
+.sync-bar{margin:10px 12px 0;background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sync-info{font-size:12px;color:var(--sub);line-height:1.4}
+.sync-info strong{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
+.sync-btn{background:var(--bluebg);border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+.sync-btn:active{background:var(--blue);color:#000}
+/* current preset pill */
+.cur-pill{margin:10px 12px 0;background:var(--goldbg);border:1.5px solid var(--gold);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.cp-left{display:flex;flex-direction:column;gap:2px}
+.cp-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.cp-name{font-size:15px;font-weight:700}
+.cp-num{font-family:'Courier New',monospace;font-size:11px;color:var(--sub)}
+.cp-right{display:flex;gap:6px}
+.cpbtn{border-radius:8px;border:1px solid var(--border2);background:var(--panel2);color:var(--text);font-size:12px;font-weight:700;padding:7px 12px;letter-spacing:.04em}
+.cpbtn.rename{color:var(--gold);border-color:var(--gold);background:var(--goldbg)}
+.cpbtn:active{opacity:.7}
+/* list */
+.plist{padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.pitem{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.pitem:active{background:var(--panel2)}
+.pitem.cur{border-color:var(--gold);background:var(--goldbg)}
+.pitem.cur .pi-num,.pitem.cur .pi-name{color:var(--gold)}
+.pi-num{font-family:'Courier New',monospace;font-size:11px;color:var(--sub);min-width:26px;flex-shrink:0}
+.pi-name{font-size:14px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pi-tag{font-size:10px;padding:3px 8px;border-radius:5px;font-weight:700;flex-shrink:0}
+.pi-tag.device{background:var(--bluebg);color:var(--blue);border:1px solid var(--blue)}
+.pi-tag.local{background:var(--panel2);color:var(--sub);border:1px solid var(--border2)}
+.pi-load{font-size:11px;color:var(--sub);background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;flex-shrink:0}
+.pi-del{font-size:13px;padding:5px 8px;flex-shrink:0;color:var(--sub)}
+.pi-del:active{color:var(--red)}
+.pempty{text-align:center;padding:40px 20px;color:var(--sub);font-size:13px;line-height:1.9}
+
+/* OVERLAY / MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--gold)}
+.minput{width:100%;background:#000;border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:14px}
+.minput:focus{border-color:var(--gold)}
+.mbtns{display:flex;gap:10px}
+.mbtn{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700}
+.mbtn.cancel{background:var(--panel2);color:var(--sub);border:1px solid var(--border2)}
+.mbtn.ok{background:var(--goldbg);color:var(--gold);border:1.5px solid var(--gold)}
+.mbtn.ok:active{background:var(--gold);color:#000}
+/* menu sheet */
+.msheet{background:var(--panel);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:8px;width:100%;max-width:480px}
+.mitem{padding:14px 16px;font-size:14px;border-bottom:1px solid var(--border);border-radius:10px;cursor:pointer}
+.mitem.danger{color:var(--red)}
+.mitem.sub{color:var(--sub)}
+.mitem:active{background:var(--panel2)}
+/* toast */
+.toast{position:fixed;bottom:calc(var(--nav-h)+16px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:600;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.info{border-color:var(--gold);color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-status">
+      <div class="hdr-dot" id="dot"></div>
+      <span id="statusText">OFFLINE</span>
+    </div>
+    <div class="hdr-name" id="presetName">Init Preset</div>
+  </div>
+  <div class="hdr-r">
+    <select id="midiSel" title="Dispositivo MIDI"><option value="">Buscando...</option></select>
+    <button class="icon-btn" id="menuBtn">&#8942;</button>
+  </div>
+</div>
+
+<!-- EDITOR TAB -->
+<div class="tab active" id="tabEditor">
+<div class="editor-wrap">
+  <div class="hero"><h1>TONEX</h1><p>Amplifier Modeling Controller</p></div>
+
+  <div class="sec"><div class="sec-hdr gold"><span class="sec-title">Main Controls</span></div>
+    <div class="sec-body"><div class="kgrid" id="g-main"></div></div></div>
+
+  <div class="sec"><div class="sec-hdr gold"><span class="sec-title">Presence &amp; Depth</span></div>
+    <div class="sec-body"><div class="kgrid" id="g-pres"></div></div></div>
+
+  <div class="sec"><div class="sec-hdr gold"><span class="sec-title">Model / Mix</span></div>
+    <div class="sec-body"><div class="kgrid" id="g-model"></div></div></div>
+
+  <div class="sec">
+    <div class="sec-hdr green"><span class="sec-title">Noise Gate</span>
+      <button class="pwr green" data-cc="14" data-color="green"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
+    </div>
+    <div class="sec-body">
+      <div class="sel-row cols1" id="g-gate-pos"></div>
+      <div class="kgrid" id="g-gate"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr blue"><span class="sec-title">Compressor</span>
+      <button class="pwr blue" data-cc="18" data-color="blue"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
+    </div>
+    <div class="sec-body">
+      <div class="sel-row cols1" id="g-comp-pos"></div>
+      <div class="kgrid" id="g-comp"></div>
+    </div>
+  </div>
+
+  <div class="sec"><div class="sec-hdr blue"><span class="sec-title">Equalizer</span></div>
+    <div class="sec-body">
+      <div class="sel-row cols1" id="g-eq-pos"></div>
+      <div class="kgrid" id="g-eq"></div>
+    </div>
+  </div>
+
+  <div class="sec"><div class="sec-hdr gold"><span class="sec-title">VIR Cabinet</span></div>
+    <div class="sec-body">
+      <div class="sel-row cols2" id="g-vir-sel"></div>
+      <div class="kgrid" id="g-vir"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr purple"><span class="sec-title">Modulation</span>
+      <button class="pwr purple" data-cc="32" data-color="purple"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
+    </div>
+    <div class="sec-body">
+      <div class="sel-row cols2" id="g-mod-sel"></div>
+      <div class="kgrid" id="g-mod"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr green"><span class="sec-title">Delay</span>
+      <button class="pwr green" data-cc="2" data-color="green"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
+    </div>
+    <div class="sec-body">
+      <div class="sel-row cols1" id="g-delay-sel"></div>
+      <div class="kgrid" id="g-delay"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr purple"><span class="sec-title">Reverb</span>
+      <button class="pwr purple" data-cc="75" data-color="purple"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
+    </div>
+    <div class="sec-body">
+      <div class="sel-row cols1" id="g-reverb-sel"></div>
+      <div class="kgrid" id="g-reverb"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PRESETS TAB -->
+<div class="tab" id="tabPresets">
+  <div class="ptop">
+    <input class="psearch" id="psearch" type="text" placeholder="Buscar preset...">
+    <button class="save-btn" id="saveBtn">SALVAR</button>
+  </div>
+
+  <div class="sync-bar">
+    <div class="sync-info">
+      <strong>Presets do ToneX</strong>
+      Sincroniza ao receber Program Change do dispositivo
+    </div>
+    <button class="sync-btn" id="syncBtn">SINCRONIZAR</button>
+  </div>
+
+  <div id="curPill" style="display:none" class="cur-pill">
+    <div class="cp-left">
+      <div class="cp-label">Preset Ativo</div>
+      <div class="cp-name" id="cpName">—</div>
+      <div class="cp-num" id="cpNum">PC #0</div>
+    </div>
+    <div class="cp-right">
+      <button class="cpbtn rename" id="cpRenameBtn">RENOMEAR</button>
+    </div>
+  </div>
+
+  <div class="plist" id="plist"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bot-nav">
+  <button class="nav-btn active" id="navEditor" onclick="switchTab('editor')">
+    <div class="nav-ico">⊞</div>EDITOR
+  </button>
+  <button class="nav-btn" id="navPresets" onclick="switchTab('presets')">
+    <div class="nav-ico">☰</div>PRESETS
+  </button>
+</nav>
+
+<!-- SAVE MODAL -->
+<div class="overlay" id="saveModal">
+  <div class="modal">
+    <h3>Salvar Preset</h3>
+    <input class="minput" id="saveName" type="text" placeholder="Nome do preset..." maxlength="32">
+    <div class="mbtns">
+      <button class="mbtn cancel" id="saveCancelBtn">CANCELAR</button>
+      <button class="mbtn ok" id="saveOkBtn">SALVAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU SHEET -->
+<div class="overlay" id="menuSheet">
+  <div class="msheet">
+    <div class="mitem" id="mReset">Resetar todos os valores</div>
+    <div class="mitem sub" id="mClose">Fechar</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// MIDI STATE
+// ═══════════════════════════════════════════════════════════
+var midiOut = null, midiIn = null, midiAccess = null, midiCh = 0;
+var curPC = -1; // current program change index received from device
+
+// Storage key
+var STORE = 'tnx3_presets';
+
+// Presets array: { name, pc, cc:{} }
+// pc = -1 means local only (no device slot assigned)
+var presets = JSON.parse(localStorage.getItem(STORE) || '[]');
+
+// CC defaults (all 0-127)
+var ccDef = {
+  102:64,23:64,25:64,28:64,
+  106:64,107:64,19:64,15:64,
+  103:100,104:64,
+  14:0,16:64,17:64,13:0,
+  18:0,20:64,21:64,22:0,
+  24:64,26:64,27:64,29:64,30:0,
+  108:64,109:0,110:64,111:64,112:0,113:64,114:64,115:64,
+  32:0,33:0,31:0,35:64,36:64,37:64,
+  2:0,3:0,5:64,6:64,8:64,
+  75:0,85:0,59:64,62:64
+};
+var ccVal = {};
+Object.assign(ccVal, ccDef);
+
+// ═══════════════════════════════════════════════════════════
+// MIDI FUNCTIONS
+// ═══════════════════════════════════════════════════════════
+function sendCC(cc, v) { if (midiOut) midiOut.send([0xB0 | midiCh, cc & 127, v & 127]); }
+function sendPC(p)     { if (midiOut) midiOut.send([0xC0 | midiCh, p & 127]); }
+
+function setStatus(on, lbl) {
+  var d = document.getElementById('dot');
+  d.className = 'hdr-dot' + (on ? ' on' : '');
+  document.getElementById('statusText').textContent = on ? lbl : 'OFFLINE';
+}
+
+// Handle incoming MIDI
+function onMidiMsg(e) {
+  var d = e.data;
+  if (!d || !d.length) return;
+  var type = d[0] & 0xF0;
+  var ch   = d[0] & 0x0F;
+
+  // CC message → sync knob / select
+  if (type === 0xB0 && d.length >= 3) {
+    var cc = d[1], val = d[2];
+    ccVal[cc] = val;
+    refreshControl(cc);
+  }
+
+  // Program Change → update active preset
+  if (type === 0xC0 && d.length >= 2) {
+    curPC = d[1];
+    onDevicePresetChange(curPC);
+  }
+}
+
+function onDevicePresetChange(pc) {
+  // Find if we have a saved entry matching this PC
+  var match = presets.find(function(p) { return p.pc === pc; });
+  var name = match ? match.name : ('Preset ' + (pc + 1));
+  document.getElementById('presetName').textContent = name;
+  document.getElementById('cpName').textContent = name;
+  document.getElementById('cpNum').textContent = 'PC #' + pc;
+  document.getElementById('curPill').style.display = '';
+  if (curTabIsPresets) renderPresets();
+  showToast('Preset ' + (pc + 1) + ' ativo', 'info');
+}
+
+function populateDevices() {
+  var sel = document.getElementById('midiSel'), prev = sel.value, auto = null;
+  sel.innerHTML = '<option value="">-- dispositivo --</option>';
+  for (var [id, out] of midiAccess.outputs) {
+    var o = document.createElement('option');
+    o.value = id; o.textContent = out.name; sel.appendChild(o);
+    if (!auto && (out.name.toLowerCase().includes('tonex') || id === prev)) auto = id;
+  }
+  if (auto) { sel.value = auto; pickDev(auto); } else setStatus(false, '');
+
+  // MIDI In
+  midiIn = null;
+  for (var [id2, inp] of midiAccess.inputs) {
+    if (!midiIn || inp.name.toLowerCase().includes('tonex')) {
+      if (midiIn) midiIn.onmidimessage = null;
+      midiIn = inp;
+      inp.onmidimessage = onMidiMsg;
+    }
+  }
+}
+
+function pickDev(id) {
+  midiOut = id && midiAccess ? (midiAccess.outputs.get(id) || null) : null;
+  setStatus(!!midiOut, midiOut ? midiOut.name.toUpperCase() : '');
+}
+
+if (navigator.requestMIDIAccess) {
+  navigator.requestMIDIAccess({ sysex: true }).then(function(a) {
+    midiAccess = a; populateDevices(); a.onstatechange = populateDevices;
+  }, function() { setStatus(false, 'SEM PERMISSÃO'); });
+} else {
+  setStatus(false, 'USE CHROME');
+}
+document.getElementById('midiSel').addEventListener('change', function(e) { pickDev(e.target.value); });
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+var toastTimer = null;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || 'ok');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.className = 'toast'; }, 2200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// KNOB ENGINE
+// ═══════════════════════════════════════════════════════════
+var knobs = {};
+var activeK = null;
+var COLORS = { gold:'#d4af37', green:'#00d96a', purple:'#b060ff', blue:'#00b4ff' };
+
+function drawKnob(k) {
+  var canvas = k.canvas, ctx = canvas.getContext('2d');
+  var W = canvas.width, cx = W / 2, cy = W / 2;
+  var arcR  = cx - 6;
+  var bodyR = cx - 14;
+
+  ctx.clearRect(0, 0, W, W);
+
+  var pct = Math.max(0, Math.min(1, (k.val - k.min) / (k.max - k.min)));
+  var startA = 0.75 * Math.PI;
+  var sweepA = 1.5 * Math.PI;
+  var curA   = startA + pct * sweepA;
+
+  // Track
+  ctx.beginPath();
+  ctx.arc(cx, cy, arcR, startA, startA + sweepA);
+  ctx.strokeStyle = '#1e1e1e'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.stroke();
+
+  // Progress
+  if (pct > 0.005) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, arcR, startA, curA);
+    ctx.strokeStyle = k.color; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.stroke();
+  }
+
+  // Body gradient
+  var g = ctx.createRadialGradient(cx - bodyR*0.3, cy - bodyR*0.35, 0, cx, cy, bodyR);
+  g.addColorStop(0, '#2e2e2e'); g.addColorStop(0.6, '#141414'); g.addColorStop(1, '#030303');
+  ctx.beginPath(); ctx.arc(cx, cy, bodyR, 0, 2 * Math.PI); ctx.fillStyle = g; ctx.fill();
+
+  // Rim highlight
+  ctx.beginPath();
+  ctx.arc(cx, cy, bodyR, 1.1 * Math.PI, 1.9 * Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Indicator dot — white dot on the knob face at curA position
+  var indR = bodyR - 8;
+  var dx = cx + indR * Math.cos(curA);
+  var dy = cy + indR * Math.sin(curA);
+  ctx.beginPath(); ctx.arc(dx, dy, 3.5, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff'; ctx.fill();
+}
+
+function updateKnobDisplay(k) {
+  drawKnob(k);
+  if (k.valEl) k.valEl.textContent = (k.val / 12.7).toFixed(1);
+  ccVal[k.cc] = Math.round(k.val);
+}
+
+function refreshControl(cc) {
+  var k = knobs[cc];
+  if (k) { k.val = ccVal[cc]; updateKnobDisplay(k); }
+  // also refresh any select tied to this cc
+  var ss = selectMap[cc];
+  if (ss) {
+    // find closest option
+    var idx = Math.round(ccVal[cc] / 127 * (ss.opts.length - 1));
+    idx = Math.max(0, Math.min(ss.opts.length - 1, idx));
+    ss.sel.value = idx;
+    ss.txt.textContent = ss.opts[idx] || '';
+  }
+  // pp toggle
+  var pp = ppMap[cc];
+  if (pp) {
+    var post = ccVal[cc] >= 64;
+    pp.btns[0].className = 'pp-btn' + (!post ? ' active ' + pp.color : '');
+    pp.btns[1].className = 'pp-btn' + ( post ? ' active ' + pp.color : '');
+  }
+}
+
+window.addEventListener('mousemove', function(e) {
+  if (!activeK) return;
+  var k = activeK.k;
+  var dy = activeK.sy - e.clientY;
+  k.val = Math.max(k.min, Math.min(k.max, activeK.sv + dy * (k.max - k.min) / 160));
+  updateKnobDisplay(k); sendCC(k.cc, Math.round(k.val));
+});
+window.addEventListener('mouseup', function() { activeK = null; });
+
+function createKnob(parent, cc, label, color) {
+  var unit = document.createElement('div'); unit.className = 'ctrl-unit';
+  var wrap = document.createElement('div'); wrap.className = 'knob-wrap';
+  var body = document.createElement('div'); body.className = 'knob-body';
+  var canvas = document.createElement('canvas');
+  // 2× res for sharpness
+  canvas.width = 168; canvas.height = 168;
+  canvas.className = 'knob-canvas';
+  canvas.style.width = '84px'; canvas.style.height = '84px';
+
+  wrap.appendChild(body); wrap.appendChild(canvas);
+  var lbl = document.createElement('div'); lbl.className = 'ctrl-lbl'; lbl.textContent = label;
+  var vd  = document.createElement('div'); vd.className = 'ctrl-val ' + color;
+
+  var k = {
+    cc: cc, canvas: canvas, valEl: vd,
+    val: ccVal[cc] !== undefined ? ccVal[cc] : 64,
+    min: 0, max: 127,
+    color: COLORS[color] || COLORS.gold
+  };
+  knobs[cc] = k;
+  updateKnobDisplay(k);
+
+  unit.addEventListener('mousedown', function(e) { e.preventDefault(); activeK = { k:k, sy:e.clientY, sv:k.val }; });
+  unit.addEventListener('touchstart', function(e) {
+    e.preventDefault(); activeK = { k:k, sy:e.touches[0].clientY, sv:k.val };
+  }, { passive:false });
+  unit.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (!activeK || activeK.k !== k) return;
+    var dy = activeK.sy - e.touches[0].clientY;
+    k.val = Math.max(k.min, Math.min(k.max, activeK.sv + dy * 127 / 160));
+    updateKnobDisplay(k); sendCC(k.cc, Math.round(k.val));
+  }, { passive:false });
+  unit.addEventListener('touchend', function() { activeK = null; });
+  unit.addEventListener('dblclick', function() { k.val = 64; updateKnobDisplay(k); sendCC(k.cc, 64); });
+
+  unit.appendChild(wrap); unit.appendChild(lbl); unit.appendChild(vd);
+  parent.appendChild(unit);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELECT  — sends raw index value (0, 1, 2 ...) as the CC
+// ═══════════════════════════════════════════════════════════
+var selectMap = {}; // cc -> {sel, txt, opts}
+function createSelect(parent, cc, label, opts, color) {
+  var wrap = document.createElement('div'); wrap.className = 'sel-wrap';
+  var lbl  = document.createElement('div'); lbl.className = 'sel-lbl'; lbl.textContent = label;
+  var box  = document.createElement('div'); box.className = 'sel-box ' + color;
+  var txt  = document.createElement('span'); txt.className = 'sel-text'; txt.textContent = opts[0] || '';
+  var chev = document.createElement('span'); chev.className = 'sel-chev ' + color; chev.textContent = '▾';
+  var sel  = document.createElement('select'); sel.className = 'sel-native';
+  opts.forEach(function(o, i) {
+    var opt = document.createElement('option'); opt.value = i; opt.textContent = o; sel.appendChild(opt);
+  });
+
+  // *** FIX: send raw index value, NOT scaled to 127 ***
+  sel.addEventListener('change', function() {
+    var idx = parseInt(sel.value);
+    txt.textContent = opts[idx] || '';
+    ccVal[cc] = idx;
+    sendCC(cc, idx);
+  });
+
+  selectMap[cc] = { sel: sel, txt: txt, opts: opts };
+  box.appendChild(txt); box.appendChild(chev); box.appendChild(sel);
+  wrap.appendChild(lbl); wrap.appendChild(box);
+  parent.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRE/POST TOGGLE — sends 0 (PRE) or 127 (POST)
+// ═══════════════════════════════════════════════════════════
+var ppMap = {}; // cc -> {btns, color}
+function createPP(parent, cc, label, color) {
+  var wrap = document.createElement('div'); wrap.className = 'pp-wrap';
+  var lbl  = document.createElement('div'); lbl.className = 'pp-lbl'; lbl.textContent = label;
+  var seg  = document.createElement('div'); seg.className = 'pp-seg ' + color;
+  var btns = [];
+  ['PRE', 'POST'].forEach(function(t, i) {
+    var btn = document.createElement('button');
+    btn.className = 'pp-btn' + (i === 0 ? ' active ' + color : '');
+    btn.textContent = t;
+    btn.addEventListener('click', function() {
+      btns.forEach(function(b) { b.className = 'pp-btn'; });
+      btn.className = 'pp-btn active ' + color;
+      var v = i === 0 ? 0 : 127;
+      ccVal[cc] = v; sendCC(cc, v);
+    });
+    seg.appendChild(btn); btns.push(btn);
+  });
+  ppMap[cc] = { btns: btns, color: color };
+  wrap.appendChild(lbl); wrap.appendChild(seg);
+  parent.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════════════════
+// POWER BUTTONS
+// ═══════════════════════════════════════════════════════════
+document.querySelectorAll('.pwr[data-cc]').forEach(function(btn) {
+  var cc = parseInt(btn.dataset.cc), color = btn.dataset.color;
+  btn.addEventListener('click', function() {
+    var on = btn.classList.toggle('on');
+    if (on) btn.classList.add(color); else btn.classList.remove(color);
+    ccVal[cc] = on ? 127 : 0; sendCC(cc, ccVal[cc]);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// BUILD ALL CONTROLS
+// ═══════════════════════════════════════════════════════════
+function G(id) { return document.getElementById(id); }
+
+createKnob(G('g-main'), 102,'GAIN','gold');
+createKnob(G('g-main'),  23,'BASS','gold');
+createKnob(G('g-main'),  25,'MID','gold');
+createKnob(G('g-main'),  28,'TREBLE','gold');
+
+createKnob(G('g-pres'), 106,'PRESENCE','gold');
+createKnob(G('g-pres'), 107,'DEPTH','gold');
+createKnob(G('g-pres'),  19,'COMP THR','gold');
+createKnob(G('g-pres'),  15,'GATE THR','gold');
+
+createKnob(G('g-model'), 103,'MOD. VOL','gold');
+createKnob(G('g-model'), 104,'MOD. MIX','gold');
+
+createPP(G('g-gate-pos'), 13,'POSITION','green');
+createKnob(G('g-gate'), 16,'RELEASE','green');
+createKnob(G('g-gate'), 17,'DEPTH','green');
+
+createPP(G('g-comp-pos'), 22,'POSITION','blue');
+createKnob(G('g-comp'), 20,'GAIN','blue');
+createKnob(G('g-comp'), 21,'ATTACK','blue');
+
+createPP(G('g-eq-pos'), 30,'POSITION','blue');
+createKnob(G('g-eq'), 24,'BASS HZ','blue');
+createKnob(G('g-eq'), 26,'MID Q','blue');
+createKnob(G('g-eq'), 27,'MID HZ','blue');
+createKnob(G('g-eq'), 29,'TREB HZ','blue');
+
+createSelect(G('g-vir-sel'), 109,'MIC 1',['SM57','R121','MD421','U87'],'gold');
+createSelect(G('g-vir-sel'), 112,'MIC 2',['SM57','R121','MD421','U87'],'gold');
+createKnob(G('g-vir'), 108,'RESONANCE','gold');
+createKnob(G('g-vir'), 115,'BLEND','gold');
+createKnob(G('g-vir'), 110,'MIC 1 X','gold');
+createKnob(G('g-vir'), 111,'MIC 1 Z','gold');
+createKnob(G('g-vir'), 113,'MIC 2 X','gold');
+createKnob(G('g-vir'), 114,'MIC 2 Z','gold');
+
+// *** MODULATION — TYPE sends 0-4 raw index ***
+createSelect(G('g-mod-sel'),  33,'TYPE',['Chorus','Flanger','Phaser','Tremolo','Rotary'],'purple');
+createPP(G('g-mod-sel'), 31,'POSITION','purple');
+createKnob(G('g-mod'), 35,'RATE','purple');
+createKnob(G('g-mod'), 36,'DEPTH','purple');
+createKnob(G('g-mod'), 37,'LEVEL','purple');
+
+// *** DELAY TYPE sends 0 or 1 raw ***
+createSelect(G('g-delay-sel'), 3,'TYPE',['Digital','Tape'],'green');
+createKnob(G('g-delay'),  5,'TIME','green');
+createKnob(G('g-delay'),  6,'FEEDBACK','green');
+createKnob(G('g-delay'),  8,'MIX','green');
+
+// *** REVERB TYPE sends 0-5 raw index ***
+createSelect(G('g-reverb-sel'), 85,'TYPE',['Room','Plate','Spring 1','Spring 2','Spring 3','Spring 4'],'purple');
+createKnob(G('g-reverb'), 59,'TIME','purple');
+createKnob(G('g-reverb'), 62,'MIX','purple');
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+var curTabIsPresets = false;
+function switchTab(t) {
+  curTabIsPresets = (t === 'presets');
+  document.getElementById('tabEditor').classList.toggle('active', t === 'editor');
+  document.getElementById('tabPresets').classList.toggle('active', t === 'presets');
+  document.getElementById('navEditor').classList.toggle('active', t === 'editor');
+  document.getElementById('navPresets').classList.toggle('active', t === 'presets');
+  if (curTabIsPresets) renderPresets();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRESET SYSTEM
+// ═══════════════════════════════════════════════════════════
+function snapshot() {
+  var s = {};
+  for (var k in ccVal) s[k] = ccVal[k];
+  return s;
+}
+
+function applySnapshot(snap) {
+  for (var cc in snap) {
+    ccVal[cc] = snap[cc];
+    refreshControl(parseInt(cc));
+    sendCC(parseInt(cc), snap[cc]);
+  }
+}
+
+function savePresets() {
+  localStorage.setItem(STORE, JSON.stringify(presets));
+}
+
+function renderPresets() {
+  var list = document.getElementById('plist');
+  var q    = document.getElementById('psearch').value.toLowerCase();
+  list.innerHTML = '';
+
+  // Update current pill
+  if (curPC >= 0) {
+    var matchCur = presets.find(function(p) { return p.pc === curPC; });
+    document.getElementById('cpName').textContent = matchCur ? matchCur.name : ('Preset ' + (curPC + 1));
+    document.getElementById('cpNum').textContent  = 'PC #' + curPC;
+    document.getElementById('curPill').style.display = '';
+  }
+
+  var shown = presets.filter(function(p) {
+    return !q || p.name.toLowerCase().includes(q);
+  });
+
+  if (!shown.length) {
+    list.innerHTML = '<div class="pempty">Nenhum preset salvo.<br><br>'
+      + 'Pressione <strong>SALVAR</strong> para guardar<br>o estado atual com um nome.<br><br>'
+      + 'Os presets ficam vinculados ao<br>número de Program Change ativo.</div>';
+    return;
+  }
+
+  shown.forEach(function(p) {
+    var ri = presets.indexOf(p);
+    var item = document.createElement('div');
+    item.className = 'pitem' + (p.pc === curPC ? ' cur' : '');
+
+    var num  = document.createElement('div'); num.className = 'pi-num';
+    num.textContent = p.pc >= 0 ? 'PC ' + String(p.pc + 1).padStart(3,'0') : '---';
+    var name = document.createElement('div'); name.className = 'pi-name'; name.textContent = p.name;
+    var tag  = document.createElement('div');
+    tag.className = 'pi-tag ' + (p.pc >= 0 ? 'device' : 'local');
+    tag.textContent = p.pc >= 0 ? 'ToneX' : 'local';
+    var load = document.createElement('button'); load.className = 'pi-load'; load.textContent = 'LOAD';
+    var del  = document.createElement('button'); del.className = 'pi-del'; del.textContent = '✕';
+
+    load.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (p.pc >= 0) {
+        // Send PC to ToneX — it will recall the preset and send back CCs
+        sendPC(p.pc);
+        curPC = p.pc;
+        document.getElementById('presetName').textContent = p.name;
+        showToast('Carregando ' + p.name + '...', 'info');
+      }
+      // Also restore our saved CC snapshot
+      if (p.cc) applySnapshot(p.cc);
+      renderPresets();
+    });
+
+    del.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (confirm('Apagar "' + p.name + '"?')) {
+        presets.splice(ri, 1); savePresets(); renderPresets();
+        showToast('Preset apagado', 'err');
+      }
+    });
+
+    item.appendChild(num); item.appendChild(name); item.appendChild(tag);
+    item.appendChild(load); item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+
+// Save button
+document.getElementById('saveBtn').addEventListener('click', function() {
+  document.getElementById('saveName').value = document.getElementById('presetName').textContent;
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(function() { document.getElementById('saveName').focus(); }, 120);
+});
+document.getElementById('saveCancelBtn').addEventListener('click', function() {
+  document.getElementById('saveModal').classList.remove('open');
+});
+document.getElementById('saveOkBtn').addEventListener('click', function() {
+  var name = document.getElementById('saveName').value.trim() || 'Sem nome';
+  // Update existing entry for this PC, or add new
+  var existing = curPC >= 0 ? presets.find(function(p) { return p.pc === curPC; }) : null;
+  if (existing) {
+    existing.name = name;
+    existing.cc   = snapshot();
+    showToast('Preset atualizado!', 'ok');
+  } else {
+    presets.push({ name: name, pc: curPC, cc: snapshot() });
+    showToast('Preset salvo!', 'ok');
+  }
+  document.getElementById('presetName').textContent = name;
+  savePresets();
+  document.getElementById('saveModal').classList.remove('open');
+  if (curTabIsPresets) renderPresets();
+});
+document.getElementById('saveModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// Rename active preset from pill
+document.getElementById('cpRenameBtn').addEventListener('click', function() {
+  var existing = presets.find(function(p) { return p.pc === curPC; });
+  var cur = existing ? existing.name : document.getElementById('presetName').textContent;
+  document.getElementById('saveName').value = cur;
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(function() { document.getElementById('saveName').focus(); }, 120);
+});
+
+// Sync button — sends PC 0 to start, then listens
+document.getElementById('syncBtn').addEventListener('click', function() {
+  if (!midiOut) { showToast('Conecte o ToneX primeiro', 'err'); return; }
+  // Request current preset state by sending PC 0 and waiting for response
+  // Then user can navigate on the ToneX and app will auto-sync via onMidiMsg
+  showToast('Navegue nos presets do ToneX — o app sincroniza automaticamente', 'info');
+});
+
+// Search
+document.getElementById('psearch').addEventListener('input', renderPresets);
+
+// ═══════════════════════════════════════════════════════════
+// MENU
+// ═══════════════════════════════════════════════════════════
+document.getElementById('menuBtn').addEventListener('click', function() {
+  document.getElementById('menuSheet').classList.add('open');
+});
+document.getElementById('mClose').addEventListener('click', function() {
+  document.getElementById('menuSheet').classList.remove('open');
+});
+document.getElementById('menuSheet').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+document.getElementById('mReset').addEventListener('click', function() {
+  document.getElementById('menuSheet').classList.remove('open');
+  if (confirm('Resetar todos os valores para o padrão?')) {
+    Object.assign(ccVal, ccDef);
+    for (var cc in ccDef) { refreshControl(parseInt(cc)); sendCC(parseInt(cc), ccDef[cc]); }
+    showToast('Valores resetados', 'info');
+  }
+});
+</script>
+</body>
+</html>
