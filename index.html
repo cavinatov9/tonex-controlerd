@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,188 +7,215 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0d0d0d;--panel:#161616;--panel2:#1e1e1e;--panel3:#232323;
-  --border:#252525;--border2:#303030;
-  --text:#e2e2e2;--sub:#555;--sub2:#3a3a3a;
-  --amp:#e06020;    /* orange — AMP */
-  --cab:#e06020;    /* orange — CAB */
-  --gate:#7060ff;   /* purple — NOISE GATE */
-  --comp:#d040a0;   /* magenta — COMP */
-  --mod:#c8a020;    /* amber/gold — MOD */
-  --delay:#30b060;  /* green — DELAY */
-  --reverb:#2090e0; /* blue — REVERB */
-  --red:#cc3030;
+  --bg:#0a0a0a;--panel:#131313;--panel2:#1a1a1a;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --text:#ddd;--sub:#484848;
+  --gate:#6655ee;--comp:#cc3399;--mod:#b89010;
+  --delay:#20a050;--reverb:#1880cc;--amp:#d05818;
 }
-html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'Helvetica Neue',Roboto,sans-serif;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
 ::-webkit-scrollbar{width:0;height:0}
 
-/* ═══ HEADER ═══ */
-.hdr{background:#000;border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:300}
-.hdr-left{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
-.hdr-status{display:flex;align-items:center;gap:5px}
-.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:all .3s}
-.hdr-dot.on{background:#30d060;box-shadow:0 0 6px #30d060}
-.hdr-status-txt{font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--sub);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hdr-preset{font-size:17px;font-weight:700;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hdr-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-#midiSel{background:#111;border:1px solid var(--border2);color:var(--text);font-size:10px;padding:5px 7px;border-radius:6px;outline:none;-webkit-appearance:none;max-width:110px}
-.hdr-menu{width:30px;height:30px;border-radius:7px;background:#111;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:16px}
+/* ── HEADER ── */
+.hdr{background:linear-gradient(180deg,#111 0%,#0c0c0c 100%);border-bottom:1px solid #1a1a1a;padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:300}
+.hdr-l{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.hdr-status{display:flex;align-items:center;gap:6px}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:#551111;flex-shrink:0;transition:all .4s}
+.hdr-dot.on{background:#22dd66;box-shadow:0 0 8px #22dd66,0 0 20px rgba(34,221,102,.3)}
+.hdr-status-txt{font-size:9px;font-weight:600;letter-spacing:.12em;color:var(--sub);text-transform:uppercase}
+.hdr-preset{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.3px}
+.hdr-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#midiSel{background:#111;border:1px solid #222;color:#aaa;font-size:10px;padding:5px 8px;border-radius:6px;outline:none;-webkit-appearance:none;max-width:110px}
+.hdr-menu{width:32px;height:32px;border-radius:8px;background:#111;border:1px solid #222;display:flex;align-items:center;justify-content:center;color:#444;font-size:17px}
 
-/* ═══ CHAIN STRIP ═══ */
-.chain{background:#000;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;position:sticky;top:52px;z-index:200}
+/* ── CHAIN STRIP ── */
+.chain-wrap{position:sticky;top:54px;z-index:200;background:#080808;border-bottom:1px solid #151515;overflow:hidden}
+.chain-signal{width:100%;height:2px;position:relative;overflow:hidden}
+.chain-signal-line{height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.06) 50%,transparent 100%);animation:sigflow 2.5s linear infinite}
+@keyframes sigflow{from{transform:translateX(-100%)}to{transform:translateX(200%)}}
+.chain{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0}
 .chain::-webkit-scrollbar{height:0}
-.chain-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 14px;min-width:80px;height:56px;cursor:pointer;position:relative;flex-shrink:0;border-right:1px solid var(--border);scroll-snap-align:start;transition:background .15s;gap:3px}
-.chain-item:last-child{border-right:none}
-/* signal flow arrow between blocks */
-.chain-item::before{content:'▸';position:absolute;right:-7px;top:50%;transform:translateY(-50%);font-size:8px;color:#2a2a2a;z-index:2;pointer-events:none}
-.chain-item:last-child::before{display:none}
-/* AMP anchor — left border accent so it's always visually fixed */
-.chain-item[data-sec="amp"]{border-left:2px solid rgba(224,96,32,.5)}
-.chain-item:active{background:#111}
-.chain-item.active{background:#111}
-.chain-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;transition:background .15s}
+.chain-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:76px;height:62px;cursor:pointer;position:relative;flex-shrink:0;transition:all .2s;gap:3px;padding:0 10px}
+.chain-item::after{content:'';position:absolute;bottom:0;left:6px;right:6px;height:2px;background:transparent;border-radius:2px 2px 0 0;transition:all .2s}
 .chain-item.active::after{background:var(--c)}
-.chain-icon{font-size:14px;line-height:1;color:var(--sub);transition:color .15s}
-.chain-item.active .chain-icon{color:var(--c)}
-.chain-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);white-space:nowrap;transition:color .15s}
+/* connector line between items */
+.chain-connector{width:16px;height:62px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.chain-connector svg{width:16px;height:10px}
+/* SVG chain icon canvas */
+.chain-svg-wrap{width:32px;height:32px;position:relative;flex-shrink:0}
+.chain-svg-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.chain-label{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#333;white-space:nowrap;transition:color .2s}
 .chain-item.active .chain-label{color:var(--c)}
-/* power LED on chain */
-.chain-led{width:5px;height:5px;border-radius:50%;background:var(--sub2);position:absolute;top:7px;right:8px;transition:all .2s}
-.chain-led.on{background:var(--c);box-shadow:0 0 5px var(--c)}
+.chain-led{width:4px;height:4px;border-radius:50%;background:#1a1a1a;position:absolute;top:6px;right:6px;transition:all .25s}
+.chain-led.on{background:var(--c);box-shadow:0 0 6px var(--c)}
+/* AMP separator */
+.chain-item[data-sec="amp"]{border-left:1px solid #1e1e1e}
 
-/* ═══ SECTION CONTENT ═══ */
-.section{display:none;padding:16px 14px;min-height:calc(100dvh - 108px)}
+/* ── SECTIONS ── */
+.section{display:none;padding:18px 16px 40px}
 .section.active{display:block}
 
-/* ═══ SECTION HEADER BAR ═══ */
-.sec-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:10px;border-bottom:1.5px solid var(--c, #333)}
-.sec-bar-left{display:flex;align-items:center;gap:10px}
-.sec-bar-title{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-/* power button */
-.pwr{width:32px;height:32px;border-radius:7px;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.pwr svg{width:15px;height:15px;stroke:var(--sub);fill:none;stroke-width:2.2;stroke-linecap:round}
-.pwr.on{background:rgba(255,255,255,.06);border-color:var(--c)}
-.pwr.on svg{stroke:var(--c)}
-.pwr:active{transform:scale(.92)}
+/* ── SECTION HEADER ── */
+.sec-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;position:relative}
+.sec-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--c) 0%,transparent 70%)}
+.sec-bar-l{display:flex;align-items:center;gap:12px}
+.sec-title{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
 
-/* ═══ SELECT ═══ */
-.sel-wrap{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
-.sel-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sub)}
-.sel-box{background:#000;border-radius:8px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;padding:10px 12px;position:relative;overflow:hidden}
-.sel-active{border-color:var(--c)}
-.sel-native{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer;font-size:16px}
-.sel-text{font-size:14px;font-weight:600;pointer-events:none}
-.sel-chev{font-size:11px;flex-shrink:0;pointer-events:none;color:var(--c)}
-/* two col selects */
-.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+/* ── POWER BTN (canvas-drawn) ── */
+.pwr-wrap{width:38px;height:38px;position:relative;flex-shrink:0;cursor:pointer}
+.pwr-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* ── PRE/POST ── */
+.pp-wrap{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.pp-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.pp-track{display:flex;background:#0d0d0d;border-radius:10px;border:1px solid #1e1e1e;padding:3px;gap:3px;position:relative}
+.pp-btn{flex:1;padding:9px 8px;text-align:center;font-size:11px;font-weight:700;color:#333;background:transparent;border:none;font-family:inherit;cursor:pointer;letter-spacing:.08em;border-radius:7px;transition:all .2s;position:relative;z-index:1}
+.pp-btn.act{color:#000;background:var(--c);box-shadow:0 2px 8px color-mix(in srgb,var(--c) 50%,transparent)}
+.pp-btn:not(.act):active{color:var(--c)}
+
+/* ── CUSTOM PICKER TRIGGER ── */
+.sel-wrap{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.sel-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.sel-trigger{background:linear-gradient(160deg,#141414 0%,#0d0d0d 100%);border-radius:12px;border:1px solid #242424;display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:52px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;gap:10px}
+.sel-trigger:active{border-color:var(--c);background:#111}
+.sel-trigger::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);pointer-events:none}
+.sel-trigger-left{display:flex;align-items:center;gap:11px;min-width:0}
+.sel-trigger-icon{width:32px;height:32px;border-radius:8px;background:color-mix(in srgb,var(--c) 12%,#0a0a0a);border:1px solid color-mix(in srgb,var(--c) 25%,#1a1a1a);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sel-trigger-icon canvas{display:block}
+.sel-trigger-name{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sel-trigger-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.sel-trigger-idx{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#0a0a0a);border:1px solid color-mix(in srgb,var(--c) 25%,#111);border-radius:5px;padding:2px 7px}
+.sel-trigger-chev{color:#333;font-size:14px;transition:transform .2s}
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
 .sel-grid .sel-wrap{margin-bottom:0}
 
-/* ═══ PRE/POST TOGGLE ═══ */
-.pp-wrap{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
-.pp-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sub)}
-.pp-seg{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border2);background:#000}
-.pp-active{border-color:var(--c)}
-.pp-btn{flex:1;padding:10px 8px;text-align:center;font-size:12px;font-weight:700;color:var(--sub);background:transparent;border:none;font-family:inherit;cursor:pointer;letter-spacing:.05em;transition:all .15s}
-.pp-btn+.pp-btn{border-left:1px solid var(--border2)}
-.pp-btn.act{background:rgba(255,255,255,.07);color:var(--c)}
-.pp-btn:active{opacity:.7}
+/* ── PICKER SHEET ── */
+.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:600;display:none;align-items:flex-end;justify-content:center;transition:background .25s}
+.picker-overlay.open{display:flex;background:rgba(0,0,0,.75)}
+.picker-sheet{background:#0e0e0e;border:1px solid #1e1e1e;border-radius:22px 22px 0 0;width:100%;max-width:480px;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);padding-bottom:env(safe-area-inset-bottom,0)}
+.picker-overlay.open .picker-sheet{transform:translateY(0)}
+.picker-handle{width:36px;height:4px;background:#252525;border-radius:2px;margin:12px auto 0}
+.picker-header{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #181818}
+.picker-title{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#444}
+.picker-close{width:28px;height:28px;border-radius:7px;background:#161616;border:1px solid #222;display:flex;align-items:center;justify-content:center;color:#444;font-size:14px}
+.picker-opts{padding:12px 14px 20px;display:flex;flex-direction:column;gap:6px;max-height:65vh;overflow-y:auto}
+.picker-opt{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:12px;cursor:pointer;border:1px solid #181818;background:transparent;transition:all .15s;position:relative;overflow:hidden}
+.picker-opt::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02) 0%,transparent 60%);pointer-events:none}
+.picker-opt:active{background:#151515}
+.picker-opt.selected{background:color-mix(in srgb,var(--pc) 10%,#0d0d0d);border-color:color-mix(in srgb,var(--pc) 35%,#1a1a1a)}
+.picker-opt-icon{width:42px;height:42px;border-radius:10px;background:color-mix(in srgb,var(--pc) 10%,#0a0a0a);border:1px solid color-mix(in srgb,var(--pc) 20%,#1a1a1a);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.picker-opt-icon canvas{display:block}
+.picker-opt-info{flex:1;min-width:0}
+.picker-opt-name{font-size:15px;font-weight:600}
+.picker-opt-sub{font-size:11px;color:#333;margin-top:2px;letter-spacing:.02em}
+.picker-opt.selected .picker-opt-name{color:var(--pc)}
+.picker-opt.selected .picker-opt-sub{color:color-mix(in srgb,var(--pc) 60%,#333)}
+.picker-opt-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #252525;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.picker-opt.selected .picker-opt-check{background:var(--pc);border-color:var(--pc)}
+.picker-opt-check svg{width:11px;height:11px;stroke:#000;fill:none;stroke-width:2.5;stroke-linecap:round;opacity:0;transition:opacity .15s}
+.picker-opt.selected .picker-opt-check svg{opacity:1}
 
-/* ═══ KNOB GRID ═══ */
-.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px 8px;justify-items:center;margin-top:4px}
+/* ── KNOB GRID ── */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:16px 8px;justify-items:center}
 
-/* ═══ KNOB ═══ */
-.ctrl-unit{display:flex;flex-direction:column;align-items:center;gap:6px;touch-action:none;user-select:none;-webkit-user-select:none;width:80px;cursor:ns-resize}
-.knob-wrap{width:68px;height:68px;position:relative}
-.knob-body{width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 36% 32%,#2a2a2a 0%,#0f0f0f 55%,#030303 100%);box-shadow:0 4px 12px rgba(0,0,0,.9),inset 0 1px 2px rgba(255,255,255,.05)}
-.knob-canvas{position:absolute;top:-8px;left:-8px;display:block;touch-action:none}
-.ctrl-lbl{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--sub);text-align:center}
-.ctrl-val{font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-align:center;color:var(--c, #888)}
+/* ── KNOB ── */
+.ctrl-unit{display:flex;flex-direction:column;align-items:center;gap:7px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:ns-resize;width:86px}
+.knob-canvas-wrap{width:86px;height:86px;position:relative}
+.knob-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.ctrl-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#3a3a3a;text-align:center}
+.ctrl-val{font-family:'SF Mono','Courier New',monospace;font-size:11px;font-weight:700;text-align:center;color:var(--c);min-width:32px;background:#0d0d0d;border-radius:4px;padding:2px 5px;border:1px solid #1a1a1a}
 
-/* ═══ AMP section special ═══ */
-.amp-info{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.amp-icon{width:36px;height:36px;border-radius:7px;border:1.5px solid var(--c);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
-.amp-name{font-size:16px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.amp-lock{font-size:16px;color:var(--sub)}
-
-/* ═══ MENU SHEET ═══ */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:flex-end;justify-content:center}
+/* ── MENU ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
-.msheet{background:var(--panel);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:8px;width:100%;max-width:480px}
-.mitem{padding:14px 16px;font-size:14px;border-bottom:1px solid var(--border);border-radius:8px;cursor:pointer}
-.mitem.sub{color:var(--sub);border:none}
-.mitem:active{background:var(--panel2)}
+.msheet{background:#111;border:1px solid #222;border-radius:22px 22px 0 0;padding:10px;width:100%;max-width:480px}
+.mitem{padding:15px 18px;font-size:14px;border-bottom:1px solid #1a1a1a;border-radius:10px;cursor:pointer;color:#bbb}
+.mitem.sub{color:#333;border:none}
+.mitem:active{background:#1a1a1a}
 
-/* ═══ TOAST ═══ */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:9px 18px;font-size:13px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:600;white-space:nowrap}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#111;border:1px solid #222;border-radius:12px;padding:10px 20px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:600;white-space:nowrap;letter-spacing:.04em}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:#30d060;color:#30d060}
-.toast.err{border-color:var(--red);color:var(--red)}
+.toast.ok{border-color:#22dd66;color:#22dd66}
+.toast.err{border-color:#cc3333;color:#cc3333}
 .toast.info{border-color:var(--mod);color:var(--mod)}
+
+/* ── AMP INFO ── */
+.amp-card{background:linear-gradient(135deg,#151515 0%,#111 100%);border:1px solid #222;border-radius:14px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.amp-icon-wrap{width:48px;height:48px;border-radius:10px;border:1px solid color-mix(in srgb,var(--c) 40%,#222);background:color-mix(in srgb,var(--c) 8%,#0d0d0d);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.amp-name{font-size:15px;font-weight:700;flex:1}
+.amp-sub{font-size:11px;color:#333;margin-top:2px}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
-  <div class="hdr-left">
+  <div class="hdr-l">
     <div class="hdr-status">
       <div class="hdr-dot" id="dot"></div>
       <div class="hdr-status-txt" id="statusText">OFFLINE</div>
     </div>
     <div class="hdr-preset" id="presetName">Init Preset</div>
   </div>
-  <div class="hdr-right">
+  <div class="hdr-r">
     <select id="midiSel"><option value="">Dispositivo...</option></select>
     <button class="hdr-menu" id="menuBtn">&#8942;</button>
   </div>
 </div>
 
 <!-- CHAIN STRIP -->
-<div class="chain" id="chain">
-  <div class="chain-item active" data-sec="gate" style="--c:var(--gate)">
-    <div class="chain-led on" id="led-gate"></div>
-    <div class="chain-icon">〜</div>
-    <div class="chain-label">Gate</div>
-  </div>
-  <div class="chain-item" data-sec="amp" style="--c:var(--amp)">
-    <div class="chain-icon">♬</div>
-    <div class="chain-label">AMP</div>
-  </div>
-  <div class="chain-item" data-sec="cab" style="--c:var(--cab)">
-    <div class="chain-icon">◉</div>
-    <div class="chain-label">CAB</div>
-  </div>
-  <div class="chain-item" data-sec="comp" style="--c:var(--comp)">
-    <div class="chain-led" id="led-comp"></div>
-    <div class="chain-icon">⟋</div>
-    <div class="chain-label">COMP</div>
-  </div>
-  <div class="chain-item" data-sec="mod" style="--c:var(--mod)">
-    <div class="chain-led" id="led-mod"></div>
-    <div class="chain-icon">∿</div>
-    <div class="chain-label">MOD</div>
-  </div>
-  <div class="chain-item" data-sec="delay" style="--c:var(--delay)">
-    <div class="chain-led" id="led-delay"></div>
-    <div class="chain-icon">⏱</div>
-    <div class="chain-label">DELAY</div>
-  </div>
-  <div class="chain-item" data-sec="reverb" style="--c:var(--reverb)">
-    <div class="chain-led" id="led-reverb"></div>
-    <div class="chain-icon">〾</div>
-    <div class="chain-label">REVERB</div>
+<div class="chain-wrap">
+  <div class="chain-signal"><div class="chain-signal-line"></div></div>
+  <div class="chain" id="chain">
+    <div class="chain-item active" data-sec="gate" style="--c:var(--gate)">
+      <div class="chain-led on" id="led-gate"></div>
+      <div class="chain-svg-wrap"><canvas id="ci-gate" width="64" height="64"></canvas></div>
+      <div class="chain-label">Gate</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="amp" style="--c:var(--amp)">
+      <div class="chain-svg-wrap"><canvas id="ci-amp" width="64" height="64"></canvas></div>
+      <div class="chain-label">AMP</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="cab" style="--c:var(--amp)">
+      <div class="chain-svg-wrap"><canvas id="ci-cab" width="64" height="64"></canvas></div>
+      <div class="chain-label">CAB</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="comp" style="--c:var(--comp)">
+      <div class="chain-led" id="led-comp"></div>
+      <div class="chain-svg-wrap"><canvas id="ci-comp" width="64" height="64"></canvas></div>
+      <div class="chain-label">COMP</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="mod" style="--c:var(--mod)">
+      <div class="chain-led" id="led-mod"></div>
+      <div class="chain-svg-wrap"><canvas id="ci-mod" width="64" height="64"></canvas></div>
+      <div class="chain-label">MOD</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="delay" style="--c:var(--delay)">
+      <div class="chain-led" id="led-delay"></div>
+      <div class="chain-svg-wrap"><canvas id="ci-delay" width="64" height="64"></canvas></div>
+      <div class="chain-label">DELAY</div>
+    </div>
+    <div class="chain-connector"><svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg></div>
+    <div class="chain-item" data-sec="reverb" style="--c:var(--reverb)">
+      <div class="chain-led" id="led-reverb"></div>
+      <div class="chain-svg-wrap"><canvas id="ci-reverb" width="64" height="64"></canvas></div>
+      <div class="chain-label">REVERB</div>
+    </div>
   </div>
 </div>
-
-<!-- SECTIONS -->
 
 <!-- NOISE GATE -->
 <div class="section active" id="sec-gate" style="--c:var(--gate)">
   <div class="sec-bar">
-    <div class="sec-bar-left">
-      <button class="pwr" id="pwr-14" data-cc="14" data-led="led-gate"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
-      <div class="sec-bar-title">Noise Gate</div>
+    <div class="sec-bar-l">
+      <div class="pwr-wrap" id="pwr-14" data-cc="14" data-led="led-gate"><canvas width="76" height="76"></canvas></div>
+      <div class="sec-title">Noise Gate</div>
     </div>
   </div>
   <div id="g-gate-pos"></div>
@@ -198,26 +224,17 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 
 <!-- AMP -->
 <div class="section" id="sec-amp" style="--c:var(--amp)">
-  <div class="sec-bar">
-    <div class="sec-bar-left">
-      <div class="sec-bar-title">Amplifier</div>
-    </div>
-  </div>
-  <div class="amp-info">
-    <div class="amp-icon">♬</div>
-    <div class="amp-name">Amp Model</div>
-    <div class="amp-lock">🔒</div>
+  <div class="sec-bar"><div class="sec-bar-l"><div class="sec-title">Amplifier</div></div></div>
+  <div class="amp-card">
+    <div class="amp-icon-wrap"><canvas id="amp-icon-canvas" width="48" height="48"></canvas></div>
+    <div><div class="amp-name">Amp Model</div><div class="amp-sub">IK ToneX</div></div>
   </div>
   <div class="kgrid" id="g-amp"></div>
 </div>
 
-<!-- CAB / VIR -->
-<div class="section" id="sec-cab" style="--c:var(--cab)">
-  <div class="sec-bar">
-    <div class="sec-bar-left">
-      <div class="sec-bar-title">VIR Cabinet</div>
-    </div>
-  </div>
+<!-- CAB -->
+<div class="section" id="sec-cab" style="--c:var(--amp)">
+  <div class="sec-bar"><div class="sec-bar-l"><div class="sec-title">VIR Cabinet</div></div></div>
   <div class="sel-grid" id="g-vir-sel"></div>
   <div class="kgrid" id="g-vir"></div>
 </div>
@@ -225,9 +242,9 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 <!-- COMP -->
 <div class="section" id="sec-comp" style="--c:var(--comp)">
   <div class="sec-bar">
-    <div class="sec-bar-left">
-      <button class="pwr" id="pwr-18" data-cc="18" data-led="led-comp"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
-      <div class="sec-bar-title">Compressor</div>
+    <div class="sec-bar-l">
+      <div class="pwr-wrap" id="pwr-18" data-cc="18" data-led="led-comp"><canvas width="76" height="76"></canvas></div>
+      <div class="sec-title">Compressor</div>
     </div>
   </div>
   <div id="g-comp-pos"></div>
@@ -237,9 +254,9 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 <!-- MODULATION -->
 <div class="section" id="sec-mod" style="--c:var(--mod)">
   <div class="sec-bar">
-    <div class="sec-bar-left">
-      <button class="pwr" id="pwr-32" data-cc="32" data-led="led-mod"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
-      <div class="sec-bar-title">Modulation</div>
+    <div class="sec-bar-l">
+      <div class="pwr-wrap" id="pwr-32" data-cc="32" data-led="led-mod"><canvas width="76" height="76"></canvas></div>
+      <div class="sec-title">Modulation</div>
     </div>
   </div>
   <div id="sec-mod-body"></div>
@@ -248,9 +265,9 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 <!-- DELAY -->
 <div class="section" id="sec-delay" style="--c:var(--delay)">
   <div class="sec-bar">
-    <div class="sec-bar-left">
-      <button class="pwr" id="pwr-2" data-cc="2" data-led="led-delay"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
-      <div class="sec-bar-title">Delay</div>
+    <div class="sec-bar-l">
+      <div class="pwr-wrap" id="pwr-2" data-cc="2" data-led="led-delay"><canvas width="76" height="76"></canvas></div>
+      <div class="sec-title">Delay</div>
     </div>
   </div>
   <div id="sec-delay-body"></div>
@@ -259,22 +276,32 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 <!-- REVERB -->
 <div class="section" id="sec-reverb" style="--c:var(--reverb)">
   <div class="sec-bar">
-    <div class="sec-bar-left">
-      <button class="pwr" id="pwr-75" data-cc="75" data-led="led-reverb"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M8.93 5.27A7 7 0 1 0 15.07 5.27"/></svg></button>
-      <div class="sec-bar-title">Reverb</div>
+    <div class="sec-bar-l">
+      <div class="pwr-wrap" id="pwr-75" data-cc="75" data-led="led-reverb"><canvas width="76" height="76"></canvas></div>
+      <div class="sec-title">Reverb</div>
     </div>
   </div>
   <div id="sec-reverb-body"></div>
 </div>
 
-<!-- MENU -->
+<!-- PICKER SHEET -->
+<div class="picker-overlay" id="pickerOverlay">
+  <div class="picker-sheet" id="pickerSheet">
+    <div class="picker-handle"></div>
+    <div class="picker-header">
+      <div class="picker-title" id="pickerTitle">Select</div>
+      <button class="picker-close" id="pickerClose">✕</button>
+    </div>
+    <div class="picker-opts" id="pickerOpts"></div>
+  </div>
+</div>
+
 <div class="overlay" id="menuSheet">
   <div class="msheet">
     <div class="mitem" id="mReset">Resetar todos os valores</div>
     <div class="mitem sub" id="mClose">Fechar</div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -282,53 +309,32 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 // STATE
 // ══════════════════════════════════════════════════
 var midiOut=null,midiIn=null,midiAccess=null,midiCh=0;
-var knobs={},selectMap={},ppMap={};
+var knobs={},selectMap={},ppMap={},pwrBtns={};
 var activeK=null;
-
-// Section color map (CSS var name → resolved hex for canvas)
-var SEC_COLORS={
-  gate:'#7060ff',amp:'#e06020',cab:'#e06020',
-  comp:'#d040a0',mod:'#c8a020',delay:'#30b060',reverb:'#2090e0'
-};
+var C={gate:'#6655ee',amp:'#d05818',cab:'#d05818',comp:'#cc3399',mod:'#b89010',delay:'#20a050',reverb:'#1880cc'};
 
 var ccDef={
-  102:64,23:64,25:64,28:64,       // AMP: gain,bass,mid,treble
-  106:64,107:64,                   // presence,depth
-  103:100,104:64,                  // model vol,mix
-  14:127,13:0,15:64,16:64,17:64,  // gate: on,pos,thr,release,depth
-  18:0,22:0,19:64,20:64,21:64,    // comp: on,pos,thr,gain,attack
-  30:0,24:64,26:64,27:64,29:64,   // eq pos,bass hz,mid q,mid hz,treb hz
-  109:0,112:0,                     // cab mic selects
-  108:64,115:64,110:64,111:64,113:64,114:64, // cab knobs
-  32:0,33:0,31:0,                  // mod: on,type,pos
-  35:64,36:64,37:64,38:64,39:0,   // mod params
-  2:0,3:0,4:0,5:64,6:50,8:50,     // delay: on,type,mode,time,fb,mix
-  11:127,                           // delay position (POST by default)
-  75:0,85:0,59:64,60:20,61:64,62:50, // reverb: on,type,time,predelay,color,mix
-  63:127                            // reverb position (POST by default)
+  102:64,23:64,25:64,28:64,106:64,107:64,103:100,104:64,
+  14:127,13:0,15:64,16:64,17:64,
+  18:0,22:0,19:64,20:64,21:64,
+  30:0,24:64,26:64,27:64,29:64,
+  109:0,112:0,108:64,115:64,110:64,111:64,113:64,114:64,
+  32:0,33:0,31:0,35:64,36:64,37:64,38:64,39:0,
+  2:0,3:0,4:0,5:64,6:50,8:50,11:127,
+  75:0,85:0,59:64,60:20,61:64,62:50,63:127
 };
-var ccVal={};
-Object.assign(ccVal,ccDef);
+var ccVal={};Object.assign(ccVal,ccDef);
 
-// ══════════════════════════════════════════════════
-// MIDI
-// ══════════════════════════════════════════════════
+// ── MIDI ──
 function sendCC(cc,v){if(midiOut)midiOut.send([0xB0|midiCh,cc&127,v&127]);}
-function sendPC(p){if(midiOut)midiOut.send([0xC0|midiCh,p&127]);}
-
 function setStatus(on,lbl){
   document.getElementById('dot').className='hdr-dot'+(on?' on':'');
   document.getElementById('statusText').textContent=on?lbl:'OFFLINE';
 }
 function onMidiMsg(e){
   var d=e.data;if(!d||!d.length)return;
-  var t=d[0]&0xF0;
-  if(t===0xB0&&d.length>=3){ccVal[d[1]]=d[2];refreshControl(d[1]);}
-  if(t===0xC0&&d.length>=2){
-    var pc=d[1];
-    document.getElementById('presetName').textContent='Preset '+(pc+1);
-    showToast('Preset '+(pc+1),'info');
-  }
+  if((d[0]&0xF0)===0xB0&&d.length>=3){ccVal[d[1]]=d[2];refreshControl(d[1]);}
+  if((d[0]&0xF0)===0xC0&&d.length>=2){document.getElementById('presetName').textContent='Preset '+(d[1]+1);showToast('Preset '+(d[1]+1),'info');}
 }
 function populateDevices(){
   var sel=document.getElementById('midiSel'),prev=sel.value,auto=null;
@@ -340,79 +346,257 @@ function populateDevices(){
   if(auto){sel.value=auto;pickDev(auto);}else setStatus(false,'');
   midiIn=null;
   for(var[id2,inp]of midiAccess.inputs){
-    if(!midiIn||inp.name.toLowerCase().includes('tonex')){
-      if(midiIn)midiIn.onmidimessage=null;midiIn=inp;inp.onmidimessage=onMidiMsg;
-    }
+    if(!midiIn||inp.name.toLowerCase().includes('tonex')){if(midiIn)midiIn.onmidimessage=null;midiIn=inp;inp.onmidimessage=onMidiMsg;}
   }
 }
-function pickDev(id){
-  midiOut=id&&midiAccess?(midiAccess.outputs.get(id)||null):null;
-  setStatus(!!midiOut,midiOut?midiOut.name.toUpperCase():'');
-}
+function pickDev(id){midiOut=id&&midiAccess?(midiAccess.outputs.get(id)||null):null;setStatus(!!midiOut,midiOut?midiOut.name.toUpperCase():'');}
 if(navigator.requestMIDIAccess){
-  navigator.requestMIDIAccess({sysex:true}).then(function(a){
-    midiAccess=a;populateDevices();a.onstatechange=populateDevices;
-  },function(){setStatus(false,'SEM PERMISSÃO');});
+  navigator.requestMIDIAccess({sysex:true}).then(function(a){midiAccess=a;populateDevices();a.onstatechange=populateDevices;},function(){setStatus(false,'SEM PERMISSÃO');});
 }else setStatus(false,'USE CHROME');
 document.getElementById('midiSel').addEventListener('change',function(e){pickDev(e.target.value);});
 
-// ══════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════
+// ── TOAST ──
 var toastT=null;
-function showToast(msg,type){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show '+(type||'ok');
-  if(toastT)clearTimeout(toastT);
-  toastT=setTimeout(function(){t.className='toast';},2200);
-}
+function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'ok');if(toastT)clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast';},2200);}
 
 // ══════════════════════════════════════════════════
-// CHAIN NAV
+// CANVAS DRAWING HELPERS
 // ══════════════════════════════════════════════════
-var curSec='gate';
-document.querySelectorAll('.chain-item').forEach(function(item){
-  item.addEventListener('click',function(){
-    var sec=item.dataset.sec;
-    document.querySelectorAll('.chain-item').forEach(function(i){i.classList.remove('active');});
-    document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
-    item.classList.add('active');
-    document.getElementById('sec-'+sec).classList.add('active');
-    curSec=sec;
+function hexAlpha(hex,a){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+// ── KNOB DRAW (full 3D metallic) ──
+function drawKnob(k){
+  var c=k.canvas,ctx=c.getContext('2d'),W=c.width,H=c.height,cx=W/2,cy=H/2;
+  ctx.clearRect(0,0,W,H);
+  var outerR=cx-2, arcR=cx-14, bodyR=cx-22;
+  var pct=Math.max(0,Math.min(1,(k.val-k.min)/(k.max-k.min)));
+  var sA=0.75*Math.PI,swA=1.5*Math.PI,curA=sA+pct*swA;
+
+  // Outer shadow ring
+  ctx.beginPath();ctx.arc(cx,cy,outerR,0,2*Math.PI);
+  var shadowG=ctx.createRadialGradient(cx,cy,bodyR+2,cx,cy,outerR);
+  shadowG.addColorStop(0,'rgba(0,0,0,0)');shadowG.addColorStop(1,'rgba(0,0,0,.6)');
+  ctx.fillStyle=shadowG;ctx.fill();
+
+  // Arc track background
+  ctx.beginPath();ctx.arc(cx,cy,arcR,sA,sA+swA);
+  ctx.strokeStyle='#0d0d0d';ctx.lineWidth=8;ctx.lineCap='round';ctx.stroke();
+  // Arc track texture (subtle dots)
+  ctx.beginPath();ctx.arc(cx,cy,arcR,sA,sA+swA);
+  ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=7;ctx.setLineDash([2,6]);ctx.stroke();ctx.setLineDash([]);
+
+  // Progress arc with glow
+  if(pct>0.01){
+    // glow layer
+    ctx.beginPath();ctx.arc(cx,cy,arcR,sA,curA);
+    ctx.strokeStyle=hexAlpha(k.color,.25);ctx.lineWidth=14;ctx.lineCap='round';ctx.stroke();
+    // main arc
+    var arcG=ctx.createLinearGradient(0,H,W,0);
+    arcG.addColorStop(0,k.color);arcG.addColorStop(1,lightenColor(k.color,40));
+    ctx.beginPath();ctx.arc(cx,cy,arcR,sA,curA);
+    ctx.strokeStyle=arcG;ctx.lineWidth=7;ctx.lineCap='round';ctx.stroke();
+    // bright tip dot
+    var tipX=cx+arcR*Math.cos(curA),tipY=cy+arcR*Math.sin(curA);
+    var tipG=ctx.createRadialGradient(tipX,tipY,0,tipX,tipY,7);
+    tipG.addColorStop(0,'#fff');tipG.addColorStop(.4,k.color);tipG.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(tipX,tipY,7,0,2*Math.PI);ctx.fillStyle=tipG;ctx.fill();
+  }
+
+  // Knob body — multi-layer 3D
+  // Base dark
+  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.fillStyle='#080808';ctx.fill();
+  // Beveled metal ring
+  var ringG=ctx.createLinearGradient(cx-bodyR,cy-bodyR,cx+bodyR,cy+bodyR);
+  ringG.addColorStop(0,'rgba(80,80,80,.6)');ringG.addColorStop(.4,'rgba(30,30,30,.3)');
+  ringG.addColorStop(.6,'rgba(10,10,10,.8)');ringG.addColorStop(1,'rgba(60,60,60,.4)');
+  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.strokeStyle=ringG;ctx.lineWidth=3;ctx.stroke();
+  // Body gradient (radial with highlight top-left)
+  var bodyG=ctx.createRadialGradient(cx-bodyR*.35,cy-bodyR*.4,0,cx,cy,bodyR);
+  bodyG.addColorStop(0,'#303030');bodyG.addColorStop(.25,'#1a1a1a');bodyG.addColorStop(.7,'#0d0d0d');bodyG.addColorStop(1,'#050505');
+  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.fillStyle=bodyG;ctx.fill();
+  // Specular highlight top-left
+  var specG=ctx.createRadialGradient(cx-bodyR*.3,cy-bodyR*.3,0,cx-bodyR*.1,cy-bodyR*.1,bodyR*.7);
+  specG.addColorStop(0,'rgba(255,255,255,.12)');specG.addColorStop(.5,'rgba(255,255,255,.03)');specG.addColorStop(1,'transparent');
+  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.fillStyle=specG;ctx.fill();
+  // Bottom shadow
+  var botG=ctx.createRadialGradient(cx+bodyR*.2,cy+bodyR*.25,0,cx+bodyR*.1,cy+bodyR*.1,bodyR*.8);
+  botG.addColorStop(0,'rgba(0,0,0,.5)');botG.addColorStop(1,'transparent');
+  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.fillStyle=botG;ctx.fill();
+
+  // Center screw detail
+  ctx.beginPath();ctx.arc(cx,cy,4,0,2*Math.PI);
+  var screwG=ctx.createRadialGradient(cx-1.5,cy-1.5,0,cx,cy,4);
+  screwG.addColorStop(0,'#3a3a3a');screwG.addColorStop(1,'#111');
+  ctx.fillStyle=screwG;ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,2*Math.PI);ctx.strokeStyle='rgba(0,0,0,.6)';ctx.lineWidth=.5;ctx.stroke();
+
+  // Indicator line — thick with glow
+  var iOuter=bodyR-6,iInner=bodyR*.2;
+  var lx1=cx+iInner*Math.cos(curA),ly1=cy+iInner*Math.sin(curA);
+  var lx2=cx+iOuter*Math.cos(curA),ly2=cy+iOuter*Math.sin(curA);
+  // glow
+  ctx.beginPath();ctx.moveTo(lx1,ly1);ctx.lineTo(lx2,ly2);
+  ctx.strokeStyle=hexAlpha(k.color,.4);ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();
+  // line
+  ctx.beginPath();ctx.moveTo(lx1,ly1);ctx.lineTo(lx2,ly2);
+  ctx.strokeStyle=k.color;ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+  // bright tip
+  ctx.beginPath();ctx.arc(lx2,ly2,2.5,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
+}
+
+function lightenColor(hex,amt){
+  var r=Math.min(255,parseInt(hex.slice(1,3),16)+amt);
+  var g=Math.min(255,parseInt(hex.slice(3,5),16)+amt);
+  var b=Math.min(255,parseInt(hex.slice(5,7),16)+amt);
+  return '#'+[r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+}
+
+// ── POWER BUTTON DRAW ──
+function drawPwr(canvas,on,color){
+  var ctx=canvas.getContext('2d'),W=canvas.width,cx=W/2,cy=W/2,R=cx-4;
+  ctx.clearRect(0,0,W,W);
+  // Outer ring
+  var outerG=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);
+  outerG.addColorStop(0,on?'rgba(80,80,80,.8)':'rgba(40,40,40,.6)');
+  outerG.addColorStop(1,on?'rgba(30,30,30,.5)':'rgba(15,15,15,.8)');
+  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);
+  ctx.fillStyle=outerG;ctx.fill();
+  // Button face
+  var faceR=R-3;
+  var faceG=ctx.createRadialGradient(cx-faceR*.2,cy-faceR*.25,0,cx,cy,faceR);
+  if(on){faceG.addColorStop(0,lightenColor(color,20));faceG.addColorStop(.5,color);faceG.addColorStop(1,'#050505');}
+  else{faceG.addColorStop(0,'#2a2a2a');faceG.addColorStop(.5,'#151515');faceG.addColorStop(1,'#050505');}
+  ctx.beginPath();ctx.arc(cx,cy,faceR,0,2*Math.PI);ctx.fillStyle=faceG;ctx.fill();
+  // Glow when on
+  if(on){
+    ctx.beginPath();ctx.arc(cx,cy,faceR,0,2*Math.PI);
+    ctx.strokeStyle=hexAlpha(color,.5);ctx.lineWidth=2;ctx.stroke();
+    var glowG=ctx.createRadialGradient(cx,cy,faceR*.5,cx,cy,R+4);
+    glowG.addColorStop(0,'transparent');glowG.addColorStop(1,hexAlpha(color,.15));
+    ctx.beginPath();ctx.arc(cx,cy,R+2,0,2*Math.PI);ctx.fillStyle=glowG;ctx.fill();
+  }
+  // Power icon
+  var iR=faceR*.42;
+  ctx.beginPath();ctx.arc(cx,cy,iR,-0.35*Math.PI,1.15*Math.PI,false);
+  ctx.strokeStyle=on?'#fff':hexAlpha('#ffffff',.25);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy-iR*.35);ctx.lineTo(cx,cy-iR*1.02);
+  ctx.strokeStyle=on?'#fff':hexAlpha('#ffffff',.25);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.stroke();
+  // Specular
+  var specG2=ctx.createRadialGradient(cx-faceR*.25,cy-faceR*.3,0,cx,cy,faceR);
+  specG2.addColorStop(0,'rgba(255,255,255,.1)');specG2.addColorStop(.4,'transparent');
+  ctx.beginPath();ctx.arc(cx,cy,faceR,0,2*Math.PI);ctx.fillStyle=specG2;ctx.fill();
+}
+
+// ── CHAIN ICON DRAW ──
+function drawChainIcon(id,type,color,active){
+  var canvas=document.getElementById(id);if(!canvas)return;
+  var ctx=canvas.getContext('2d'),W=canvas.width,cx=W/2,cy=W/2,R=cx-2;
+  ctx.clearRect(0,0,W,W);
+  // Background circle
+  var bgG=ctx.createRadialGradient(cx-R*.2,cy-R*.2,0,cx,cy,R);
+  bgG.addColorStop(0,active?hexAlpha(color,.15):'#111');
+  bgG.addColorStop(1,'#080808');
+  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.fillStyle=bgG;ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);
+  ctx.strokeStyle=active?hexAlpha(color,.5):'#1e1e1e';ctx.lineWidth=1;ctx.stroke();
+  // Icon path
+  ctx.strokeStyle=active?color:'#2e2e2e';ctx.lineWidth=1.8;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.fillStyle=active?color:'#2e2e2e';
+  var s=W/64;
+  ctx.save();ctx.translate(cx,cy);ctx.scale(s,s);
+  if(type==='gate'){
+    // Waveform gate icon
+    ctx.beginPath();ctx.moveTo(-22,0);ctx.lineTo(-14,0);ctx.lineTo(-10,-12);ctx.lineTo(-4,12);ctx.lineTo(2,-12);ctx.lineTo(8,12);ctx.lineTo(12,0);ctx.lineTo(22,0);ctx.stroke();
+    // Gate block
+    ctx.fillStyle=active?hexAlpha(color,.2):'rgba(30,30,30,.5)';
+    ctx.fillRect(-5,-15,10,30);ctx.strokeRect(-5,-15,10,30);
+  }else if(type==='amp'){
+    // Amp tube icon
+    ctx.beginPath();ctx.moveTo(-16,10);ctx.lineTo(-16,-10);ctx.quadraticCurveTo(-16,-18,0,-18);ctx.quadraticCurveTo(16,-18,16,-10);ctx.lineTo(16,10);ctx.lineTo(-16,10);ctx.stroke();
+    ctx.beginPath();ctx.arc(0,-5,6,0,2*Math.PI);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-8,10);ctx.lineTo(-8,16);ctx.moveTo(0,10);ctx.lineTo(0,16);ctx.moveTo(8,10);ctx.lineTo(8,16);ctx.stroke();
+  }else if(type==='cab'){
+    // Speaker icon
+    ctx.beginPath();ctx.arc(0,0,14,0,2*Math.PI);ctx.stroke();
+    ctx.beginPath();ctx.arc(0,0,7,0,2*Math.PI);ctx.stroke();
+    ctx.beginPath();ctx.arc(0,0,2,0,2*Math.PI);ctx.fill();
+    ctx.beginPath();ctx.moveTo(-20,-20);ctx.lineTo(-14,-14);ctx.moveTo(20,-20);ctx.lineTo(14,-14);ctx.moveTo(-20,20);ctx.lineTo(-14,14);ctx.moveTo(20,20);ctx.lineTo(14,14);ctx.stroke();
+  }else if(type==='comp'){
+    // Compressor graph icon
+    ctx.beginPath();ctx.moveTo(-18,14);ctx.lineTo(-18,-14);ctx.lineTo(18,-14);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-18,14);ctx.lineTo(-8,14);ctx.lineTo(6,-4);ctx.lineTo(18,-10);ctx.stroke();
+    // Threshold line
+    ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(-18,-4);ctx.lineTo(18,-4);ctx.strokeStyle=active?hexAlpha(color,.5):'#222';ctx.stroke();ctx.setLineDash([]);
+  }else if(type==='mod'){
+    // Sine wave
+    ctx.beginPath();
+    for(var i=-20;i<=20;i++){
+      var y=-Math.sin(i*.32)*12;
+      if(i===-20)ctx.moveTo(i,y);else ctx.lineTo(i,y);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    for(var i=-20;i<=20;i++){
+      var y=-Math.sin(i*.32+1.2)*8;
+      if(i===-20)ctx.moveTo(i,y);else ctx.lineTo(i,y);
+    }
+    ctx.strokeStyle=active?hexAlpha(color,.4):'#1e1e1e';ctx.stroke();
+  }else if(type==='delay'){
+    // Echo waveform
+    var scales=[1,.65,.42];
+    scales.forEach(function(sc,idx){
+      ctx.strokeStyle=active?hexAlpha(color,sc):(idx===0?'#2e2e2e':'#1a1a1a');
+      ctx.lineWidth=1.6*sc;
+      ctx.beginPath();ctx.arc(-12+idx*12,-2,9*sc,-Math.PI*.8,Math.PI*.8);ctx.stroke();
+      ctx.beginPath();ctx.arc(-12+idx*12,-2,9*sc,Math.PI*.2,Math.PI*1.8);ctx.stroke();
+    });
+  }else if(type==='reverb'){
+    // Reverb decay shape
+    ctx.beginPath();ctx.moveTo(-20,12);
+    for(var i=0;i<=40;i++){var x=-20+i,y=12-14*(1-Math.exp(-i*.12))+Math.sin(i*.6)*3*(1-i/40);ctx.lineTo(x,y);}
+    ctx.stroke();
+    ctx.strokeStyle=active?hexAlpha(color,.3):'#1a1a1a';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(-20,12);
+    for(var i=0;i<=40;i++){var x=-20+i,y=12-10*(1-Math.exp(-i*.09))+Math.sin(i*.6+.5)*2*(1-i/40);ctx.lineTo(x,y);}
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Draw all chain icons
+var chainIconMap={gate:'gate',amp:'amp',cab:'cab',comp:'comp',mod:'mod',delay:'delay',reverb:'reverb'};
+function drawAllChainIcons(){
+  Object.keys(chainIconMap).forEach(function(sec){
+    var item=document.querySelector('.chain-item[data-sec="'+sec+'"]');
+    var active=item&&item.classList.contains('active');
+    var color=C[sec]||C.amp;
+    drawChainIcon('ci-'+sec,chainIconMap[sec],color,active);
   });
-});
+}
+drawAllChainIcons();
+
+// Draw amp icon in AMP card
+(function(){
+  var canvas=document.getElementById('amp-icon-canvas');
+  var ctx=canvas.getContext('2d'),W=48,cx=24,cy=24;
+  ctx.clearRect(0,0,W,W);
+  var bg=ctx.createRadialGradient(12,10,0,cx,cy,24);
+  bg.addColorStop(0,hexAlpha(C.amp,.2));bg.addColorStop(1,'#080808');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,W);
+  ctx.strokeStyle=C.amp;ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.save();ctx.translate(cx,cy);ctx.scale(.6,.6);
+  ctx.beginPath();ctx.moveTo(-16,10);ctx.lineTo(-16,-10);ctx.quadraticCurveTo(-16,-18,0,-18);ctx.quadraticCurveTo(16,-18,16,-10);ctx.lineTo(16,10);ctx.lineTo(-16,10);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,-5,6,0,2*Math.PI);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-8,10);ctx.lineTo(-8,16);ctx.moveTo(0,10);ctx.lineTo(0,16);ctx.moveTo(8,10);ctx.lineTo(8,16);ctx.stroke();
+  ctx.restore();
+})();
 
 // ══════════════════════════════════════════════════
 // KNOB ENGINE
 // ══════════════════════════════════════════════════
-function drawKnob(k){
-  var ctx=k.canvas.getContext('2d');
-  var W=k.canvas.width,cx=W/2,cy=W/2,arcR=cx-8,bodyR=cx-16;
-  ctx.clearRect(0,0,W,W);
-  var pct=Math.max(0,Math.min(1,(k.val-k.min)/(k.max-k.min)));
-  var sA=0.75*Math.PI,swA=1.5*Math.PI,curA=sA+pct*swA;
-  // track bg
-  ctx.beginPath();ctx.arc(cx,cy,arcR,sA,sA+swA);
-  ctx.strokeStyle='#1c1c1c';ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();
-  // progress
-  if(pct>0.005){
-    ctx.beginPath();ctx.arc(cx,cy,arcR,sA,curA);
-    ctx.strokeStyle=k.color;ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();
-  }
-  // body gradient
-  var g=ctx.createRadialGradient(cx-bodyR*.32,cy-bodyR*.36,0,cx,cy,bodyR);
-  g.addColorStop(0,'#2a2a2a');g.addColorStop(.55,'#111');g.addColorStop(1,'#020202');
-  ctx.beginPath();ctx.arc(cx,cy,bodyR,0,2*Math.PI);ctx.fillStyle=g;ctx.fill();
-  // rim
-  ctx.beginPath();ctx.arc(cx,cy,bodyR,1.1*Math.PI,1.9*Math.PI);
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1.2;ctx.stroke();
-  // indicator line (like IK style — short line from center-ish to edge)
-  var iOuter=bodyR-4,iInner=bodyR*0.3;
-  ctx.beginPath();
-  ctx.moveTo(cx+iInner*Math.cos(curA),cy+iInner*Math.sin(curA));
-  ctx.lineTo(cx+iOuter*Math.cos(curA),cy+iOuter*Math.sin(curA));
-  ctx.strokeStyle=k.color;ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
-}
 function updateKnob(k){
   drawKnob(k);
   if(k.valEl)k.valEl.textContent=(k.val/12.7).toFixed(1);
@@ -420,17 +604,14 @@ function updateKnob(k){
 }
 function refreshControl(cc){
   var k=knobs[cc];if(k){k.val=ccVal[cc];updateKnob(k);}
-  var sm=selectMap[cc];if(sm){sm.sel.value=ccVal[cc]||0;sm.txt.textContent=sm.opts[ccVal[cc]||0]||'';}
-  var pp=ppMap[cc];if(pp){
-    var post=ccVal[cc]>=64;
-    pp.btns[0].className='pp-btn'+((!post)?' act':'');
-    pp.btns[1].className='pp-btn'+((post)?' act':'');
-  }
+  var sm=selectMap[cc];if(sm){var i=Math.max(0,Math.min(sm.opts.length-1,ccVal[cc]||0));sm.sel.value=i;sm.txt.textContent=sm.opts[i]||'';}
+  var pp=ppMap[cc];if(pp){var post=ccVal[cc]>=64;pp.btns[0].className='pp-btn'+((!post)?' act':'');pp.btns[1].className='pp-btn'+((post)?' act':'');}
+  var pw=pwrBtns[cc];if(pw){var on=ccVal[cc]>=64;drawPwr(pw.canvas,on,pw.color);}
 }
 window.addEventListener('mousemove',function(e){
   if(!activeK)return;
   var k=activeK.k,dy=activeK.sy-e.clientY;
-  k.val=Math.max(k.min,Math.min(k.max,activeK.sv+dy*(k.max-k.min)/160));
+  k.val=Math.max(k.min,Math.min(k.max,activeK.sv+dy*(k.max-k.min)/150));
   updateKnob(k);sendCC(k.cc,Math.round(k.val));
 });
 window.addEventListener('mouseup',function(){activeK=null;});
@@ -439,13 +620,10 @@ function mkKnob(parent,cc,label,color){
   delete knobs[cc];
   var unit=document.createElement('div');unit.className='ctrl-unit';
   unit.style.setProperty('--c',color);
-  var wrap=document.createElement('div');wrap.className='knob-wrap';
-  var body=document.createElement('div');body.className='knob-body';
-  // 84×84 CSS, 168×168 resolution
-  var canvas=document.createElement('canvas');
-  canvas.width=168;canvas.height=168;canvas.className='knob-canvas';
-  canvas.style.width='84px';canvas.style.height='84px';
-  wrap.appendChild(body);wrap.appendChild(canvas);
+  var wrap=document.createElement('div');wrap.className='knob-canvas-wrap';
+  var canvas=document.createElement('canvas');canvas.width=172;canvas.height=172;
+  canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:none';
+  wrap.appendChild(canvas);
   var lbl=document.createElement('div');lbl.className='ctrl-lbl';lbl.textContent=label;
   var vd=document.createElement('div');vd.className='ctrl-val';
   var k={cc:cc,canvas:canvas,valEl:vd,val:ccVal[cc]!==undefined?ccVal[cc]:64,min:0,max:127,color:color};
@@ -454,7 +632,7 @@ function mkKnob(parent,cc,label,color){
   unit.addEventListener('touchstart',function(e){e.preventDefault();activeK={k:k,sy:e.touches[0].clientY,sv:k.val};},{passive:false});
   unit.addEventListener('touchmove',function(e){
     e.preventDefault();if(!activeK||activeK.k!==k)return;
-    k.val=Math.max(k.min,Math.min(k.max,activeK.sv+(activeK.sy-e.touches[0].clientY)*127/160));
+    k.val=Math.max(k.min,Math.min(k.max,activeK.sv+(activeK.sy-e.touches[0].clientY)*127/150));
     updateKnob(k);sendCC(k.cc,Math.round(k.val));
   },{passive:false});
   unit.addEventListener('touchend',function(){activeK=null;});
@@ -463,151 +641,261 @@ function mkKnob(parent,cc,label,color){
   parent.appendChild(unit);
 }
 
-// ══════════════════════════════════════════════════
-// SELECT — raw index
-// ══════════════════════════════════════════════════
-function mkSelect(parent,cc,label,opts,color,onChange){
-  delete selectMap[cc];
-  var wrap=document.createElement('div');wrap.className='sel-wrap';
-  var lbl=document.createElement('div');lbl.className='sel-lbl';lbl.textContent=label;
-  var box=document.createElement('div');box.className='sel-box sel-active';
-  box.style.setProperty('--c',color);
-  var idx=Math.max(0,Math.min(opts.length-1,ccVal[cc]||0));
-  var txt=document.createElement('span');txt.className='sel-text';txt.textContent=opts[idx]||opts[0];
-  var chev=document.createElement('span');chev.className='sel-chev';chev.textContent='▾';
-  var sel=document.createElement('select');sel.className='sel-native';
-  opts.forEach(function(o,i){var opt=document.createElement('option');opt.value=i;opt.textContent=o;sel.appendChild(opt);});
-  sel.value=idx;
-  sel.addEventListener('change',function(){
-    var i=parseInt(sel.value);txt.textContent=opts[i]||'';
-    ccVal[cc]=i;sendCC(cc,i);if(onChange)onChange(i);
-  });
-  selectMap[cc]={sel:sel,txt:txt,opts:opts};
-  box.appendChild(txt);box.appendChild(chev);box.appendChild(sel);
-  wrap.appendChild(lbl);wrap.appendChild(box);parent.appendChild(wrap);
-}
-
-// ══════════════════════════════════════════════════
-// CHAIN REORDER — moves blocks PRE/POST the AMP
-// ══════════════════════════════════════════════════
-// CC → section id for position-aware blocks
-// CC11 = delay position, CC63 = reverb position
-var POS_CC_MAP={13:'gate',22:'comp',31:'mod',11:'delay',63:'reverb'};
-// Moveable blocks in their natural relative order
-var MOVEABLE=['gate','comp','mod','delay','reverb'];
-
-function reorderChain(silent){
-  var chain=document.getElementById('chain');
-  var items={};
-  chain.querySelectorAll('.chain-item').forEach(function(el){items[el.dataset.sec]=el;});
-
-  // position CCs: 0=PRE (<64), 127=POST (>=64)
-  var posCC={gate:13,comp:22,mod:31,delay:11,reverb:63};
-  var pre=[], post=[];
-  MOVEABLE.forEach(function(sec){
-    if(ccVal[posCC[sec]]>=64) post.push(sec); else pre.push(sec);
-  });
-
-  // Final order: [...pre] → AMP → CAB → [...post]
-  var order=pre.concat(['amp','cab']).concat(post);
-
-  order.forEach(function(sec){
-    if(items[sec]) chain.appendChild(items[sec]);
-  });
-
-  chain.querySelectorAll('.chain-item').forEach(function(el,i,arr){
-    el.style.borderRight= i<arr.length-1 ? '1px solid var(--border)' : 'none';
-  });
-
-  if(!silent) showToast('Cadeia atualizada','info');
-}
-
-// ══════════════════════════════════════════════════
-// PRE/POST TOGGLE
-// ══════════════════════════════════════════════════
-function mkPP(parent,cc,label,color,labels){
-  delete ppMap[cc];
-  labels=labels||['PRE','POST'];
-  var isPositionCC=(cc===13||cc===22||cc===31);
-  var wrap=document.createElement('div');wrap.className='pp-wrap';
-  var lbl=document.createElement('div');lbl.className='pp-lbl';lbl.textContent=label;
-  var seg=document.createElement('div');seg.className='pp-seg pp-active';
-  seg.style.setProperty('--c',color);
-  var btns=[];
-  labels.forEach(function(t,i){
-    var btn=document.createElement('button');
-    var isA=(i===0&&ccVal[cc]<64)||(i===1&&ccVal[cc]>=64);
-    btn.className='pp-btn'+(isA?' act':'');
-    btn.textContent=t;
-    btn.style.setProperty('--c',color);
-    btn.addEventListener('click',function(){
-      btns.forEach(function(b){b.className='pp-btn';});
-      btn.className='pp-btn act';
-      var v=i===0?0:127;ccVal[cc]=v;sendCC(cc,v);
-      if(isPositionCC) reorderChain();
-    });
-    seg.appendChild(btn);btns.push(btn);
-  });
-  ppMap[cc]={btns:btns,color:color};
-  wrap.appendChild(lbl);wrap.appendChild(seg);parent.appendChild(wrap);
-}
-
-// ══════════════════════════════════════════════════
-// POWER BUTTONS + LED sync
-// ══════════════════════════════════════════════════
-document.querySelectorAll('.pwr[data-cc]').forEach(function(btn){
-  var cc=parseInt(btn.dataset.cc),ledId=btn.dataset.led;
-  // init state
-  if(ccVal[cc]>=64){btn.classList.add('on');if(ledId&&document.getElementById(ledId))document.getElementById(ledId).classList.add('on');}
-  btn.addEventListener('click',function(){
-    var on=btn.classList.toggle('on');
+// ── POWER BUTTONS ──
+document.querySelectorAll('.pwr-wrap[data-cc]').forEach(function(wrap){
+  var cc=parseInt(wrap.dataset.cc),ledId=wrap.dataset.led;
+  var canvas=wrap.querySelector('canvas');
+  var color=C[wrap.closest('.section').id.replace('sec-','')] || C.amp;
+  var on=ccVal[cc]>=64;
+  drawPwr(canvas,on,color);
+  pwrBtns[cc]={canvas:canvas,color:color};
+  wrap.addEventListener('click',function(){
+    on=!on;drawPwr(canvas,on,color);
     var led=ledId?document.getElementById(ledId):null;
     if(led){if(on)led.classList.add('on');else led.classList.remove('on');}
     ccVal[cc]=on?127:0;sendCC(cc,ccVal[cc]);
   });
+  if(on&&ledId){var led=document.getElementById(ledId);if(led)led.classList.add('on');}
 });
 
 // ══════════════════════════════════════════════════
-// BUILD STATIC CONTROLS
+// OPTION ICONS — draw mini canvas icons per option
+// ══════════════════════════════════════════════════
+var OPT_ICONS={
+  // Mod types
+  'Chorus':   function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.lineCap='round';for(var i=0;i<2;i++){ctx.beginPath();for(var x=-W*.35;x<=W*.35;x+=.5){var y=Math.sin((x*.18)+(i*.8))*W*(i?0.14:0.2);if(x===-W*.35)ctx.moveTo(cx+x,cy+y);else ctx.lineTo(cx+x,cy+y);}ctx.strokeStyle=i?hexAlpha(col,.4):col;ctx.stroke();}},
+  'Flanger':  function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.lineCap='round';for(var i=0;i<2;i++){ctx.beginPath();for(var x=-W*.35;x<=W*.35;x+=.5){var ph=x*.18+i*.3,y=Math.sin(ph)*W*.18+Math.sin(ph*2)*.06*W;if(x===-W*.35)ctx.moveTo(cx+x,cy+y);else ctx.lineTo(cx+x,cy+y);}ctx.strokeStyle=i?hexAlpha(col,.35):col;ctx.stroke();}},
+  'Phaser':   function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.lineCap='round';ctx.beginPath();for(var x=-W*.35;x<=W*.35;x+=.5){var y=-Math.sin(x*.22)*W*.18*(1-Math.abs(x)/(W*.4));if(x===-W*.35)ctx.moveTo(cx+x,cy+y);else ctx.lineTo(cx+x,cy+y);}ctx.stroke();},
+  'Tremolo':  function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.lineCap='round';ctx.beginPath();var steps=[-W*.32,-W*.12,W*.08,W*.28];steps.forEach(function(x,i){var h=W*(i%2===0?.22:.08);ctx.rect(cx+x-W*.07,cy-h,W*.13,h*2);});ctx.stroke();},
+  'Rotary':   function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.8;[[0,.18],[Math.PI*.4,.14],[Math.PI*.8,.1]].forEach(function(p){ctx.beginPath();ctx.arc(cx,cy,W*p[1],0,2*Math.PI);ctx.strokeStyle=hexAlpha(col,p[1]/.2);ctx.stroke();});ctx.beginPath();ctx.moveTo(cx,cy-W*.28);ctx.lineTo(cx+W*.12,cy+W*.18);ctx.lineTo(cx-W*.12,cy+W*.18);ctx.closePath();ctx.fillStyle=hexAlpha(col,.4);ctx.fill();},
+  // Delay types
+  'Digital':  function(ctx,W,col){var cx=W/2,cy=W/2,sp=W*.14;[0,sp,sp*2].forEach(function(dx,i){ctx.strokeStyle=hexAlpha(col,1-i*.28);ctx.lineWidth=1.8-i*.3;ctx.beginPath();ctx.arc(cx+dx,cy,W*.18-i*2,-.6*Math.PI,.6*Math.PI);ctx.stroke();});},
+  'Tape':     function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.strokeRect(cx-W*.3,cy-W*.2,W*.6,W*.4);ctx.beginPath();ctx.arc(cx-W*.12,cy,W*.1,0,2*Math.PI);ctx.stroke();ctx.beginPath();ctx.arc(cx+W*.12,cy,W*.1,0,2*Math.PI);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-W*.3,cy+W*.2);ctx.lineTo(cx+W*.3,cy+W*.3);ctx.strokeStyle=hexAlpha(col,.4);ctx.stroke();},
+  // Reverb types
+  'Room':     function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.strokeRect(cx-W*.3,cy-W*.22,W*.6,W*.44);ctx.strokeStyle=hexAlpha(col,.5);ctx.beginPath();ctx.moveTo(cx-W*.12,cy-W*.22);ctx.lineTo(cx-W*.12,cy+W*.22);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+W*.12,cy-W*.22);ctx.lineTo(cx+W*.12,cy+W*.22);ctx.stroke();},
+  'Plate':    function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;for(var i=0;i<3;i++){ctx.beginPath();ctx.moveTo(cx-W*.28+i*W*.1,cy-W*.25);ctx.lineTo(cx-W*.28+i*W*.1,cy+W*.25);ctx.strokeStyle=hexAlpha(col,1-i*.25);ctx.stroke();}},
+  'Spring 1': function(ctx,W,col){_drawSpring(ctx,W,col,1);},
+  'Spring 2': function(ctx,W,col){_drawSpring(ctx,W,col,2);},
+  'Spring 3': function(ctx,W,col){_drawSpring(ctx,W,col,3);},
+  'Spring 4': function(ctx,W,col){_drawSpring(ctx,W,col,4);},
+  // Mic types
+  'SM57':  function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy-W*.06,W*.18,Math.PI,0);ctx.lineTo(cx+W*.18,cy+W*.16);ctx.lineTo(cx-W*.18,cy+W*.16);ctx.closePath();ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy+W*.16);ctx.lineTo(cx,cy+W*.32);ctx.stroke();},
+  'R121':  function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.strokeRect(cx-W*.1,cy-W*.28,W*.2,W*.44);ctx.setLineDash([2,3]);for(var i=0;i<5;i++){ctx.beginPath();ctx.moveTo(cx-W*.28,cy-W*.2+i*W*.1);ctx.lineTo(cx-W*.12,cy-W*.2+i*W*.1);ctx.stroke();}ctx.setLineDash([]);},
+  'MD421': function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(cx,cy-W*.05,W*.13,W*.22,0,0,2*Math.PI);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy+W*.17);ctx.lineTo(cx,cy+W*.32);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-W*.2,cy);ctx.lineTo(cx-W*.13,cy);ctx.stroke();},
+  'U87':   function(ctx,W,col){var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy-W*.06,W*.2,0,2*Math.PI);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-W*.2,cy-W*.06);ctx.lineTo(cx-W*.28,cy+W*.1);ctx.lineTo(cx+W*.28,cy+W*.1);ctx.lineTo(cx+W*.2,cy-W*.06);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy+W*.1);ctx.lineTo(cx,cy+W*.32);ctx.stroke();}
+};
+function _drawSpring(ctx,W,col,n){
+  var cx=W/2,cy=W/2;ctx.strokeStyle=col;ctx.lineWidth=1.4;
+  for(var s=0;s<n;s++){
+    ctx.beginPath();
+    var yOff=cy-((n-1)*W*.08)+(s*W*.16);
+    for(var x=-W*.3;x<=W*.3;x+=.5){
+      var y=yOff+Math.sin(x*.45)*W*.05;
+      if(x===-W*.3)ctx.moveTo(cx+x,y);else ctx.lineTo(cx+x,y);
+    }
+    ctx.strokeStyle=hexAlpha(col,1-s*.15);ctx.stroke();
+  }
+}
+
+var OPT_SUBS={
+  'Chorus':'Spatial widening','Flanger':'Metallic comb filter','Phaser':'Phase shifting',
+  'Tremolo':'Amplitude modulation','Rotary':'Rotary speaker',
+  'Digital':'Clean repeats','Tape':'Warm analog echo',
+  'Room':'Natural room','Plate':'Studio plate','Spring 1':'Spring reverb I',
+  'Spring 2':'Spring reverb II','Spring 3':'Spring reverb III','Spring 4':'Spring reverb IV',
+  'SM57':'Dynamic cardioid','R121':'Ribbon microphone','MD421':'Dynamic mic','U87':'Large diaphragm condenser'
+};
+
+function drawOptIcon(canvas,name,color,size){
+  var ctx=canvas.getContext('2d'),W=size||canvas.width;
+  ctx.clearRect(0,0,W,W);
+  var fn=OPT_ICONS[name];
+  if(fn)fn(ctx,W,color);
+}
+
+// ══════════════════════════════════════════════════
+// PICKER ENGINE
+// ══════════════════════════════════════════════════
+var _pickerCurrent=null; // {cc, opts, color, onChange, txtEl, iconEl}
+
+document.getElementById('pickerClose').addEventListener('click',closePicker);
+document.getElementById('pickerOverlay').addEventListener('click',function(e){if(e.target===this)closePicker();});
+
+function openPicker(state){
+  _pickerCurrent=state;
+  var overlay=document.getElementById('pickerOverlay');
+  var title=document.getElementById('pickerTitle');
+  var opts=document.getElementById('pickerOpts');
+  title.textContent=state.label;
+  opts.innerHTML='';
+  overlay.style.setProperty('--pc',state.color);
+  state.opts.forEach(function(name,i){
+    var opt=document.createElement('div');
+    opt.className='picker-opt'+(i===state.idx?' selected':'');
+    opt.style.setProperty('--pc',state.color);
+    // Icon
+    var iconWrap=document.createElement('div');iconWrap.className='picker-opt-icon';
+    var ic=document.createElement('canvas');ic.width=84;ic.height=84;ic.style.cssText='width:42px;height:42px;display:block';
+    iconWrap.appendChild(ic);
+    // Info
+    var info=document.createElement('div');info.className='picker-opt-info';
+    var nm=document.createElement('div');nm.className='picker-opt-name';nm.textContent=name;
+    var sub=document.createElement('div');sub.className='picker-opt-sub';sub.textContent=OPT_SUBS[name]||'';
+    info.appendChild(nm);info.appendChild(sub);
+    // Check
+    var chk=document.createElement('div');chk.className='picker-opt-check';
+    var chkSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    chkSvg.setAttribute('viewBox','0 0 12 12');
+    var chkPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+    chkPath.setAttribute('d','M2 6l3 3 5-5');chkSvg.appendChild(chkPath);chk.appendChild(chkSvg);
+    opt.appendChild(iconWrap);opt.appendChild(info);opt.appendChild(chk);
+    opts.appendChild(opt);
+    // Draw icon after append
+    drawOptIcon(ic,name,i===state.idx?state.color:hexAlpha(state.color,.3),84);
+    opt.addEventListener('click',function(){
+      if(_pickerCurrent){
+        _pickerCurrent.idx=i;
+        ccVal[_pickerCurrent.cc]=i;sendCC(_pickerCurrent.cc,i);
+        if(_pickerCurrent.txtEl){_pickerCurrent.txtEl.textContent=name;}
+        if(_pickerCurrent.iconEl){drawOptIcon(_pickerCurrent.iconEl,name,state.color);}
+        if(_pickerCurrent.onChange)_pickerCurrent.onChange(i);
+        if(selectMap[_pickerCurrent.cc]){selectMap[_pickerCurrent.cc].idx=i;}
+      }
+      closePicker();
+    });
+  });
+  overlay.classList.add('open');
+  // Scroll selected into view
+  var selOpt=opts.querySelector('.selected');
+  if(selOpt)setTimeout(function(){selOpt.scrollIntoView({block:'nearest'});},320);
+}
+
+function closePicker(){
+  document.getElementById('pickerOverlay').classList.remove('open');
+}
+
+// ── SELECT (custom picker) ──
+function mkSelect(parent,cc,label,opts,color,onChange){
+  selectMap[cc]={idx:Math.max(0,Math.min(opts.length-1,ccVal[cc]||0)),opts:opts};
+  var wrap=document.createElement('div');wrap.className='sel-wrap';
+  var lbl=document.createElement('div');lbl.className='sel-lbl';lbl.textContent=label;
+  var trigger=document.createElement('div');trigger.className='sel-trigger';trigger.style.setProperty('--c',color);
+  var curIdx=selectMap[cc].idx;
+  var curName=opts[curIdx]||opts[0];
+  // Left: icon + name
+  var left=document.createElement('div');left.className='sel-trigger-left';
+  var iconWrap=document.createElement('div');iconWrap.className='sel-trigger-icon';iconWrap.style.setProperty('--c',color);
+  var iconC=document.createElement('canvas');iconC.width=64;iconC.height=64;iconC.style.cssText='width:32px;height:32px;display:block';
+  iconWrap.appendChild(iconC);
+  var name=document.createElement('div');name.className='sel-trigger-name';name.textContent=curName;
+  left.appendChild(iconWrap);left.appendChild(name);
+  // Right: index badge + chevron
+  var right=document.createElement('div');right.className='sel-trigger-right';
+  var badge=document.createElement('div');badge.className='sel-trigger-idx';badge.style.setProperty('--c',color);badge.textContent=(curIdx+1)+'/'+opts.length;
+  var chevron=document.createElement('div');chevron.className='sel-trigger-chev';chevron.innerHTML='&#8964;';chevron.style.color=color;
+  right.appendChild(badge);right.appendChild(chevron);
+  trigger.appendChild(left);trigger.appendChild(right);
+  wrap.appendChild(lbl);wrap.appendChild(trigger);parent.appendChild(wrap);
+  // Draw initial icon
+  drawOptIcon(iconC,curName,color,64);
+  // Open picker on click
+  trigger.addEventListener('click',function(){
+    openPicker({cc:cc,label:label,opts:opts,color:color,idx:selectMap[cc].idx,txtEl:name,iconEl:iconC,badge:badge,onChange:function(i){
+      name.textContent=opts[i]||'';
+      drawOptIcon(iconC,opts[i]||'',color,64);
+      badge.textContent=(i+1)+'/'+opts.length;
+      if(onChange)onChange(i);
+    }});
+  });
+}
+
+// ── PRE/POST ──
+function mkPP(parent,cc,label,color,labels){
+  delete ppMap[cc];
+  labels=labels||['PRE','POST'];
+  var isPos=(cc===13||cc===22||cc===31||cc===11||cc===63);
+  var wrap=document.createElement('div');wrap.className='pp-wrap';
+  var lbl=document.createElement('div');lbl.className='pp-lbl';lbl.textContent=label;
+  var track=document.createElement('div');track.className='pp-track';track.style.setProperty('--c',color);
+  var btns=[];
+  labels.forEach(function(t,i){
+    var btn=document.createElement('button');
+    var isA=(i===0&&ccVal[cc]<64)||(i===1&&ccVal[cc]>=64);
+    btn.className='pp-btn'+(isA?' act':'');btn.textContent=t;
+    btn.style.setProperty('--c',color);
+    btn.addEventListener('click',function(){
+      btns.forEach(function(b){b.className='pp-btn';b.style.setProperty('--c',color);});
+      btn.className='pp-btn act';
+      var v=i===0?0:127;ccVal[cc]=v;sendCC(cc,v);
+      if(isPos)reorderChain();
+    });
+    track.appendChild(btn);btns.push(btn);
+  });
+  ppMap[cc]={btns:btns,color:color};
+  wrap.appendChild(lbl);wrap.appendChild(track);parent.appendChild(wrap);
+}
+
+// ══════════════════════════════════════════════════
+// CHAIN NAV + REORDER
+// ══════════════════════════════════════════════════
+document.querySelectorAll('.chain-item').forEach(function(item){
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.chain-item').forEach(function(i){i.classList.remove('active');});
+    document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+    item.classList.add('active');
+    document.getElementById('sec-'+item.dataset.sec).classList.add('active');
+    drawAllChainIcons();
+  });
+});
+
+var MOVEABLE=['gate','comp','mod','delay','reverb'];
+function reorderChain(silent){
+  var chain=document.getElementById('chain');
+  var items={},connectors=[];
+  chain.querySelectorAll('.chain-item').forEach(function(el){items[el.dataset.sec]=el;});
+  chain.querySelectorAll('.chain-connector').forEach(function(el){connectors.push(el);});
+  var posCC={gate:13,comp:22,mod:31,delay:11,reverb:63};
+  var pre=[],post=[];
+  MOVEABLE.forEach(function(sec){if(ccVal[posCC[sec]]>=64)post.push(sec);else pre.push(sec);});
+  var order=pre.concat(['amp','cab']).concat(post);
+  // Rebuild chain with connectors between
+  chain.innerHTML='';
+  order.forEach(function(sec,i){
+    chain.appendChild(items[sec]);
+    if(i<order.length-1){
+      var con=document.createElement('div');con.className='chain-connector';
+      con.innerHTML='<svg viewBox="0 0 16 4"><path d="M0 2h16" stroke="#1e1e1e" stroke-width="1.5" fill="none"/><polygon points="13,0 16,2 13,4" fill="#1e1e1e"/></svg>';
+      chain.appendChild(con);
+    }
+  });
+  drawAllChainIcons();
+  if(!silent)showToast('Cadeia atualizada','info');
+}
+
+// ══════════════════════════════════════════════════
+// BUILD CONTROLS
 // ══════════════════════════════════════════════════
 function G(id){return document.getElementById(id);}
-var C=SEC_COLORS;
 
-// AMP — Main Controls + Presence/Depth + Model
-mkKnob(G('g-amp'),102,'GAIN',C.amp);
-mkKnob(G('g-amp'),23,'BASS',C.amp);
-mkKnob(G('g-amp'),25,'MID',C.amp);
-mkKnob(G('g-amp'),28,'TREBLE',C.amp);
-mkKnob(G('g-amp'),106,'PRESENCE',C.amp);
-mkKnob(G('g-amp'),107,'DEPTH',C.amp);
-mkKnob(G('g-amp'),103,'MOD VOL',C.amp);
-mkKnob(G('g-amp'),104,'MOD MIX',C.amp);
-
-// CAB / VIR
+// AMP
+mkKnob(G('g-amp'),102,'GAIN',C.amp);mkKnob(G('g-amp'),23,'BASS',C.amp);
+mkKnob(G('g-amp'),25,'MID',C.amp);mkKnob(G('g-amp'),28,'TREBLE',C.amp);
+mkKnob(G('g-amp'),106,'PRESENCE',C.amp);mkKnob(G('g-amp'),107,'DEPTH',C.amp);
+mkKnob(G('g-amp'),103,'MOD VOL',C.amp);mkKnob(G('g-amp'),104,'MOD MIX',C.amp);
+// CAB
 mkSelect(G('g-vir-sel'),109,'MIC 1',['SM57','R121','MD421','U87'],C.cab);
 mkSelect(G('g-vir-sel'),112,'MIC 2',['SM57','R121','MD421','U87'],C.cab);
-mkKnob(G('g-vir'),108,'RESONANCE',C.cab);
-mkKnob(G('g-vir'),115,'BLEND',C.cab);
-mkKnob(G('g-vir'),110,'MIC 1 X',C.cab);
-mkKnob(G('g-vir'),111,'MIC 1 Z',C.cab);
-mkKnob(G('g-vir'),113,'MIC 2 X',C.cab);
-mkKnob(G('g-vir'),114,'MIC 2 Z',C.cab);
-
-// NOISE GATE
+mkKnob(G('g-vir'),108,'RESONANCE',C.cab);mkKnob(G('g-vir'),115,'BLEND',C.cab);
+mkKnob(G('g-vir'),110,'MIC 1 X',C.cab);mkKnob(G('g-vir'),111,'MIC 1 Z',C.cab);
+mkKnob(G('g-vir'),113,'MIC 2 X',C.cab);mkKnob(G('g-vir'),114,'MIC 2 Z',C.cab);
+// GATE
 mkPP(G('g-gate-pos'),13,'POSITION',C.gate);
-mkKnob(G('g-gate'),15,'THRESHOLD',C.gate);
-mkKnob(G('g-gate'),16,'RELEASE',C.gate);
-mkKnob(G('g-gate'),17,'DEPTH',C.gate);
-
-// COMPRESSOR
+mkKnob(G('g-gate'),15,'THRESHOLD',C.gate);mkKnob(G('g-gate'),16,'RELEASE',C.gate);mkKnob(G('g-gate'),17,'DEPTH',C.gate);
+// COMP
 mkPP(G('g-comp-pos'),22,'POSITION',C.comp);
-mkKnob(G('g-comp'),19,'THRESHOLD',C.comp);
-mkKnob(G('g-comp'),20,'GAIN',C.comp);
-mkKnob(G('g-comp'),21,'ATTACK',C.comp);
+mkKnob(G('g-comp'),19,'THRESHOLD',C.comp);mkKnob(G('g-comp'),20,'GAIN',C.comp);mkKnob(G('g-comp'),21,'ATTACK',C.comp);
 
-// ══════════════════════════════════════════════════
-// MODULATION — dynamic per type
-// ══════════════════════════════════════════════════
+// MOD
 var MOD_DEFS=[
   {name:'Chorus', k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:37,l:'LEVEL'}]},
   {name:'Flanger',k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:38,l:'FEEDBACK'},{cc:37,l:'LEVEL'}]},
@@ -617,70 +905,51 @@ var MOD_DEFS=[
 ];
 function buildModSection(){
   var body=G('sec-mod-body');body.innerHTML='';
-  // type select
   mkSelect(body,33,'TYPE',MOD_DEFS.map(function(d){return d.name;}),C.mod,function(idx){buildModKnobs(idx);});
-  // position
   mkPP(body,31,'POSITION',C.mod);
-  // knob container
-  var kg=document.createElement('div');kg.className='kgrid';kg.id='g-mod-knobs';
-  body.appendChild(kg);
+  var kg=document.createElement('div');kg.className='kgrid';kg.id='g-mod-knobs';body.appendChild(kg);
   buildModKnobs(ccVal[33]||0);
 }
 function buildModKnobs(ti){
   var kg=G('g-mod-knobs');if(!kg)return;kg.innerHTML='';
-  var def=MOD_DEFS[ti]||MOD_DEFS[0];
-  def.k.forEach(function(p){mkKnob(kg,p.cc,p.l,C.mod);});
+  (MOD_DEFS[ti]||MOD_DEFS[0]).k.forEach(function(p){mkKnob(kg,p.cc,p.l,C.mod);});
 }
 
-// ══════════════════════════════════════════════════
 // DELAY
-// ══════════════════════════════════════════════════
 function buildDelaySection(){
   var body=G('sec-delay-body');body.innerHTML='';
   mkSelect(body,3,'TYPE',['Digital','Tape'],C.delay);
   mkPP(body,11,'POSITION',C.delay);
   mkPP(body,4,'MODE',C.delay,['NORMAL','PING PONG']);
   var kg=document.createElement('div');kg.className='kgrid';
-  mkKnob(kg,5,'TIME',C.delay);
-  mkKnob(kg,6,'FEEDBACK',C.delay);
-  mkKnob(kg,8,'MIX',C.delay);
+  mkKnob(kg,5,'TIME',C.delay);mkKnob(kg,6,'FEEDBACK',C.delay);mkKnob(kg,8,'MIX',C.delay);
   body.appendChild(kg);
 }
 
-// ══════════════════════════════════════════════════
 // REVERB
-// ══════════════════════════════════════════════════
 function buildReverbSection(){
   var body=G('sec-reverb-body');body.innerHTML='';
   mkSelect(body,85,'TYPE',['Room','Plate','Spring 1','Spring 2','Spring 3','Spring 4'],C.reverb);
   mkPP(body,63,'POSITION',C.reverb);
   var kg=document.createElement('div');kg.className='kgrid';
-  mkKnob(kg,59,'TIME',C.reverb);
-  mkKnob(kg,60,'PRE DELAY',C.reverb);
-  mkKnob(kg,61,'COLOR',C.reverb);
-  mkKnob(kg,62,'MIX',C.reverb);
+  mkKnob(kg,59,'TIME',C.reverb);mkKnob(kg,60,'PRE DELAY',C.reverb);
+  mkKnob(kg,61,'COLOR',C.reverb);mkKnob(kg,62,'MIX',C.reverb);
   body.appendChild(kg);
 }
 
-buildModSection();
-buildDelaySection();
-buildReverbSection();
-
-// Apply default chain order based on default CC values
+buildModSection();buildDelaySection();buildReverbSection();
 reorderChain(true);
 
-// ══════════════════════════════════════════════════
-// MENU
-// ══════════════════════════════════════════════════
+// ── MENU ──
 G('menuBtn').addEventListener('click',function(){G('menuSheet').classList.add('open');});
 G('mClose').addEventListener('click',function(){G('menuSheet').classList.remove('open');});
 G('menuSheet').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 G('mReset').addEventListener('click',function(){
   G('menuSheet').classList.remove('open');
-  if(confirm('Resetar todos os valores para o padrão?')){
+  if(confirm('Resetar todos os valores?')){
     Object.assign(ccVal,ccDef);
     for(var cc in ccVal){refreshControl(parseInt(cc));sendCC(parseInt(cc),ccVal[cc]);}
-    buildModSection();buildDelaySection();buildReverbSection();
+    buildModSection();buildDelaySection();buildReverbSection();reorderChain(true);
     showToast('Valores resetados','info');
   }
 });
