@@ -141,6 +141,12 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
 .toast.err{border-color:#cc3333;color:#cc3333}
 .toast.info{border-color:var(--mod);color:var(--mod)}
 
+/* ── ADVANCED PARAMETERS BAR ── */
+.adv-bar{display:flex;align-items:center;gap:8px;margin:22px 0 14px;padding-top:18px;border-top:1px solid #1a1a1a}
+.adv-dot{width:6px;height:6px;border-radius:50%;background:#cc3333;box-shadow:0 0 6px rgba(204,51,51,.6);flex-shrink:0}
+.adv-title{font-size:13px;color:#888;letter-spacing:.02em}
+.adv-title strong{color:#ccc;font-weight:700}
+
 /* ── AMP INFO ── */
 .amp-card{background:linear-gradient(135deg,#151515 0%,#111 100%);border:1px solid #222;border-radius:14px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
 .amp-icon-wrap{width:48px;height:48px;border-radius:10px;border:1px solid color-mix(in srgb,var(--c) 40%,#222);background:color-mix(in srgb,var(--c) 8%,#0d0d0d);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -230,6 +236,12 @@ button{font-family:inherit;cursor:pointer;background:none;border:none;color:inhe
     <div><div class="amp-name">Amp Model</div><div class="amp-sub">IK ToneX</div></div>
   </div>
   <div class="kgrid" id="g-amp"></div>
+  <!-- Advanced Parameters (EQ) -->
+  <div class="adv-bar">
+    <div class="adv-dot"></div>
+    <div class="adv-title"><strong>Advanced</strong> Parameters</div>
+  </div>
+  <div class="kgrid" id="g-eq"></div>
 </div>
 
 <!-- CAB -->
@@ -882,6 +894,12 @@ mkKnob(G('g-amp'),102,'GAIN',C.amp);mkKnob(G('g-amp'),23,'BASS',C.amp);
 mkKnob(G('g-amp'),25,'MID',C.amp);mkKnob(G('g-amp'),28,'TREBLE',C.amp);
 mkKnob(G('g-amp'),106,'PRESENCE',C.amp);mkKnob(G('g-amp'),107,'DEPTH',C.amp);
 mkKnob(G('g-amp'),103,'MOD VOL',C.amp);mkKnob(G('g-amp'),104,'MOD MIX',C.amp);
+// EQ — Advanced Parameters (Bass Hz, Mid Hz, Mid Q, Treble Hz)
+var EQ_COLOR='#b8862a';
+mkKnob(G('g-eq'),24,'BASS Hz',EQ_COLOR);
+mkKnob(G('g-eq'),27,'MID Hz',EQ_COLOR);
+mkKnob(G('g-eq'),26,'MID Q',EQ_COLOR);
+mkKnob(G('g-eq'),29,'TREBLE Hz',EQ_COLOR);
 // CAB
 mkSelect(G('g-vir-sel'),109,'MIC 1',['SM57','R121','MD421','U87'],C.cab);
 mkSelect(G('g-vir-sel'),112,'MIC 2',['SM57','R121','MD421','U87'],C.cab);
@@ -895,12 +913,12 @@ mkKnob(G('g-gate'),15,'THRESHOLD',C.gate);mkKnob(G('g-gate'),16,'RELEASE',C.gate
 mkPP(G('g-comp-pos'),22,'POSITION',C.comp);
 mkKnob(G('g-comp'),19,'THRESHOLD',C.comp);mkKnob(G('g-comp'),20,'GAIN',C.comp);mkKnob(G('g-comp'),21,'ATTACK',C.comp);
 
-// MOD
+// MOD — order matches actual ToneX MIDI CC values (0=Chorus,1=Tremolo,2=Phaser,3=Flanger,4=Rotary)
 var MOD_DEFS=[
   {name:'Chorus', k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:37,l:'LEVEL'}]},
-  {name:'Flanger',k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:38,l:'FEEDBACK'},{cc:37,l:'LEVEL'}]},
-  {name:'Phaser', k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:37,l:'LEVEL'}]},
   {name:'Tremolo',k:[{cc:35,l:'RATE'},{cc:38,l:'SHAPE'},{cc:39,l:'SPREAD'},{cc:37,l:'LEVEL'}]},
+  {name:'Phaser', k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:37,l:'LEVEL'}]},
+  {name:'Flanger',k:[{cc:35,l:'RATE'},{cc:36,l:'DEPTH'},{cc:38,l:'FEEDBACK'},{cc:37,l:'LEVEL'}]},
   {name:'Rotary', k:[{cc:35,l:'SPEED'},{cc:36,l:'RADIUS'},{cc:39,l:'SPREAD'},{cc:37,l:'LEVEL'}]}
 ];
 function buildModSection(){
